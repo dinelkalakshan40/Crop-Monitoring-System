@@ -32,12 +32,23 @@ public class FieldController {
     }
     @GetMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> getField(@PathVariable String fieldCode) {
-        FieldDTO fieldDTO = fieldService.getField(fieldCode);
+        FieldDTO fieldDTO = fieldService.getSelectedStaffAndField(fieldCode);
         return new ResponseEntity<>(fieldDTO, HttpStatus.OK);
     }
     @GetMapping("/details/{fieldCode}")
     public ResponseEntity<FieldDTO> getFieldDetails(@PathVariable String fieldCode) {
         FieldDTO fieldDetails = fieldService.getOnlySelectedField(fieldCode);
         return new ResponseEntity<>(fieldDetails, HttpStatus.OK);
+    }
+    @PutMapping("/{fieldCode}")
+    public ResponseEntity<FieldDTO> updateFieldAndStaff(@PathVariable String fieldCode, @RequestBody FieldDTO fieldDTO) {
+        try {
+            FieldDTO updatedField = fieldService.updateFieldAndStaff(fieldCode, fieldDTO);
+            return new ResponseEntity<>(updatedField, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
