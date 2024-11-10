@@ -16,5 +16,5 @@ public class FieldDTO {
     private Double fieldSize;
     private String fieldImage1;
     private String fieldImage2;
-    private List<String> staffIds; // Only store staff IDs for simplicity
+    private List<String> staffIds;
 }

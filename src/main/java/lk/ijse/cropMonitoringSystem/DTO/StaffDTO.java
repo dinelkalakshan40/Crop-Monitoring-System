@@ -20,5 +20,5 @@ public class StaffDTO {
     private String address;
     private String contact;
     private String role;
-    private List<String> fieldCodes; // Only store field codes for simplicity
+    private List<String> fieldCodes;
 }

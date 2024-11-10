@@ -1,8 +1,10 @@
 package lk.ijse.cropMonitoringSystem.api;
 
 import lk.ijse.cropMonitoringSystem.DTO.FieldDTO;
+import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.service.FieldService;
+import lk.ijse.cropMonitoringSystem.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,15 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class FieldController {
     @Autowired
     private FieldService fieldService;
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> saveField(@RequestBody FieldDTO fieldDTO){
+    public ResponseEntity<Void> saveField(@RequestBody FieldDTO fieldDTO) {
         try {
             fieldService.saveField(fieldDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
-        }catch (DataPersistException e){
+        } catch (DataPersistException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
