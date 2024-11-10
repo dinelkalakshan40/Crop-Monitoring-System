@@ -54,4 +54,15 @@ public class FieldServiceIMPL implements FieldService {
         // Save the field entity along with its associated staff
         fieldRepository.save(fieldEntity);
     }
+
+    @Override
+    public FieldDTO getField(String fieldCode) {
+        if (fieldRepository.existsById(fieldCode)) {
+            FieldEntity fieldEntity = fieldRepository.getReferenceById(fieldCode);
+            // Convert FieldEntity to FieldDTO using ModelMapper
+            return modelMapper.map(fieldEntity, FieldDTO.class);
+        } else {
+            throw new RuntimeException("Field with code " + fieldCode + " not found");
+        }
+    }
 }

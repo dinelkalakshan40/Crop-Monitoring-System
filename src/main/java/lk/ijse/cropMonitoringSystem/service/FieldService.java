@@ -4,4 +4,5 @@ import lk.ijse.cropMonitoringSystem.DTO.FieldDTO;
 
 public interface FieldService {
     public void saveField(FieldDTO fieldDTO);
+    FieldDTO getField(String fieldCode);
 }
