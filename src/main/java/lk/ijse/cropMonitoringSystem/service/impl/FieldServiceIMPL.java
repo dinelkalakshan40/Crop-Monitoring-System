@@ -7,6 +7,7 @@ import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.repository.FieldRepository;
 import lk.ijse.cropMonitoringSystem.repository.StaffRepo;
 import lk.ijse.cropMonitoringSystem.service.FieldService;
+import lk.ijse.cropMonitoringSystem.util.AppUtil;
 import lk.ijse.cropMonitoringSystem.util.Mapping;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,14 @@ public class FieldServiceIMPL implements FieldService {
 
     @Transactional
     public void saveField(FieldDTO fieldDTO) {
+        fieldDTO.setFieldCode(AppUtil.generateFieldId());
         // Convert FieldDTO to FieldEntity
         FieldEntity fieldEntity = modelMapper.map(fieldDTO, FieldEntity.class);
 
         // Map and associate StaffEntity objects
         List<StaffEntity> staffEntities = fieldDTO.getStaff().stream()
                 .map(staffDTO -> {
+                    staffDTO.setStaffId(AppUtil.generateStaffId());
                     // Convert StaffDTO to StaffEntity
                     StaffEntity staffEntity = modelMapper.map(staffDTO, StaffEntity.class);
 
