@@ -20,19 +20,7 @@ public class Mapping {
     @Autowired
     public ModelMapper modelMapper;
 
-    public FieldEntity toFieldEntity(FieldDTO fieldDTO){
-        FieldEntity map = modelMapper.map(fieldDTO, FieldEntity.class);
-        List<StaffEntity> staffEntities =  new ArrayList<>();
-        if (!CollectionUtils.isEmpty(fieldDTO.getStaffIds())) {
-            staffEntities.addAll(fieldDTO.getStaffIds().stream().map(s -> {
-                StaffEntity entity = new StaffEntity();
-                entity.setStaffId(s);
-                return entity;
-            }).collect(Collectors.toList()));
-        }
-        map.setStaff(staffEntities);
-        return map;
-    }
+
 
 
     public StaffEntity toStaffEntity(StaffDTO staffDTO){
