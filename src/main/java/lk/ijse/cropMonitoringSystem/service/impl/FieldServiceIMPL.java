@@ -58,9 +58,27 @@ public class FieldServiceIMPL implements FieldService {
     @Override
     public FieldDTO getField(String fieldCode) {
         if (fieldRepository.existsById(fieldCode)) {
+
             FieldEntity fieldEntity = fieldRepository.getReferenceById(fieldCode);
             // Convert FieldEntity to FieldDTO using ModelMapper
             return modelMapper.map(fieldEntity, FieldDTO.class);
+        } else {
+            throw new RuntimeException("Field with code " + fieldCode + " not found");
+        }
+    }
+    @Override
+    public FieldDTO getOnlySelectedField(String fieldCode){
+        if (fieldRepository.existsById(fieldCode)) {
+            FieldEntity fieldEntity = fieldRepository.getReferenceById(fieldCode);
+
+            // Custom mapping where we map the FieldEntity to FieldDTO excluding staff
+            FieldDTO fieldDTO = modelMapper.map(fieldEntity, FieldDTO.class);
+
+            // Instead of setting staff to null, we skip the staff field entirely
+            // (This will avoid including the staff field in the response)
+            fieldDTO.setStaff(null); // If needed
+
+            return fieldDTO;
         } else {
             throw new RuntimeException("Field with code " + fieldCode + " not found");
         }

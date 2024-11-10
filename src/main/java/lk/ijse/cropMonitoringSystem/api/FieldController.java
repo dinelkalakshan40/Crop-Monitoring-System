@@ -35,4 +35,9 @@ public class FieldController {
         FieldDTO fieldDTO = fieldService.getField(fieldCode);
         return new ResponseEntity<>(fieldDTO, HttpStatus.OK);
     }
+    @GetMapping("/details/{fieldCode}")
+    public ResponseEntity<FieldDTO> getFieldDetails(@PathVariable String fieldCode) {
+        FieldDTO fieldDetails = fieldService.getOnlySelectedField(fieldCode);
+        return new ResponseEntity<>(fieldDetails, HttpStatus.OK);
+    }
 }

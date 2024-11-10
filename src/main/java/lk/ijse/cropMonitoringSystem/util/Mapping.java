@@ -20,9 +20,6 @@ public class Mapping {
     @Autowired
     public ModelMapper modelMapper;
 
-
-
-
     public StaffEntity toStaffEntity(StaffDTO staffDTO){
         return modelMapper.map(staffDTO,StaffEntity.class);
     }
