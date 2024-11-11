@@ -7,4 +7,5 @@ public interface FieldService {
     FieldDTO getSelectedStaffAndField(String fieldCode);
     FieldDTO getOnlySelectedField(String fieldCode);
     FieldDTO updateFieldAndStaff(String fieldCode,FieldDTO fieldDTO);
+    public void deleteFieldAndStaff(String fieldCode);
 }

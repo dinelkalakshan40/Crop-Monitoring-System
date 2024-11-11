@@ -30,7 +30,7 @@ public class StaffEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToMany(mappedBy = "staff")
+    @ManyToMany(mappedBy = "staff",cascade = CascadeType.ALL)
     private List<FieldEntity> fields; // Many-to-many relationship with fields
 
     enum Gender {

@@ -26,7 +26,7 @@ public class FieldEntity implements Serializable {
     @Column(columnDefinition = "LONGTEXT")
     private String fieldImage2;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.ALL,CascadeType.MERGE,CascadeType.REMOVE})
     @JoinTable(
             name = "field_staff",
             joinColumns = @JoinColumn(name = "fieldCode"),

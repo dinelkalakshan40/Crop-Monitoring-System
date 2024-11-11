@@ -118,7 +118,6 @@ public class FieldServiceIMPL implements FieldService {
                     existingStaff.setFirstName(staffDTO.getFirstName());
                     existingStaff.setLastName(staffDTO.getLastName());
                     existingStaff.setDesignation(staffDTO.getDesignation());
-
                     existingStaff.setDob(staffDTO.getDob());
                     existingStaff.setJoinedDate(staffDTO.getJoinedDate());
                     existingStaff.setAddress(staffDTO.getAddress());
@@ -140,5 +139,14 @@ public class FieldServiceIMPL implements FieldService {
 
         // Return the updated FieldDTO
         return modelMapper.map(existingField, FieldDTO.class);
+    }
+    @Override
+    public void deleteFieldAndStaff(String fieldCode) {
+        Optional<FieldEntity> field = fieldRepository.findById(fieldCode);
+        if (field.isPresent()) {
+            fieldRepository.deleteById(fieldCode);
+        } else {
+            throw new RuntimeException("Field not found with code: " + fieldCode);
+        }
     }
 }
