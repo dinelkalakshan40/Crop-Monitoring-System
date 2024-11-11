@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/fields")
 public class FieldController {
@@ -31,14 +33,19 @@ public class FieldController {
         }
     }
     @GetMapping("/{fieldCode}")
-    public ResponseEntity<FieldDTO> getField(@PathVariable String fieldCode) {
+    public ResponseEntity<FieldDTO> getFieldAndStaff(@PathVariable String fieldCode) {
         FieldDTO fieldDTO = fieldService.getSelectedStaffAndField(fieldCode);
         return new ResponseEntity<>(fieldDTO, HttpStatus.OK);
     }
     @GetMapping("/details/{fieldCode}")
-    public ResponseEntity<FieldDTO> getFieldDetails(@PathVariable String fieldCode) {
+    public ResponseEntity<FieldDTO> getOnlyField(@PathVariable String fieldCode) {
         FieldDTO fieldDetails = fieldService.getOnlySelectedField(fieldCode);
         return new ResponseEntity<>(fieldDetails, HttpStatus.OK);
+    }
+    @GetMapping("/{fieldCode}/staff")
+    public ResponseEntity<List<StaffDTO>> getStaffByFieldCode(@PathVariable String fieldCode) {
+        List<StaffDTO> staff = fieldService.getOnlySelectedFiled(fieldCode);
+        return new ResponseEntity<>(staff, HttpStatus.OK);
     }
     @PutMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> updateFieldAndStaff(@PathVariable String fieldCode, @RequestBody FieldDTO fieldDTO) {

@@ -1,5 +1,6 @@
 package lk.ijse.cropMonitoringSystem.service.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import lk.ijse.cropMonitoringSystem.DTO.FieldDTO;
 import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.entity.FieldEntity;
@@ -148,5 +149,15 @@ public class FieldServiceIMPL implements FieldService {
         } else {
             throw new RuntimeException("Field not found with code: " + fieldCode);
         }
+    }
+    @Override
+    public List<StaffDTO> getOnlySelectedFiled(String fieldCode) {
+        FieldEntity fieldEntity = fieldRepository.findById(fieldCode)
+                .orElseThrow(() -> new EntityNotFoundException("Field not found with code: " + fieldCode));
+
+        // Map StaffEntity to StaffDTO
+        return fieldEntity.getStaff().stream()
+                .map(staff -> modelMapper.map(staff, StaffDTO.class))
+                .collect(Collectors.toList());
     }
 }
