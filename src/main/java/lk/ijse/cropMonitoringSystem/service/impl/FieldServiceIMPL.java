@@ -35,14 +35,14 @@ public class FieldServiceIMPL implements FieldService {
 
     @Transactional
     public void saveField(FieldDTO fieldDTO) {
-        fieldDTO.setFieldCode(AppUtil.generateFieldId());
+
         // Convert FieldDTO to FieldEntity
         FieldEntity fieldEntity = modelMapper.map(fieldDTO, FieldEntity.class);
 
         // Map and associate StaffEntity objects
         List<StaffEntity> staffEntities = fieldDTO.getStaff().stream()
                 .map(staffDTO -> {
-                    staffDTO.setStaffId(AppUtil.generateStaffId());
+
                     // Convert StaffDTO to StaffEntity
                     StaffEntity staffEntity = modelMapper.map(staffDTO, StaffEntity.class);
 
