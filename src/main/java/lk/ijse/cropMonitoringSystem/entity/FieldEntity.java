@@ -1,5 +1,6 @@
 package lk.ijse.cropMonitoringSystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,11 +27,12 @@ public class FieldEntity implements Serializable {
     @Column(columnDefinition = "LONGTEXT")
     private String fieldImage2;
 
-    @ManyToMany(cascade = {CascadeType.ALL,CascadeType.MERGE,CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "field_staff",
             joinColumns = @JoinColumn(name = "fieldCode"),
             inverseJoinColumns = @JoinColumn(name = "staffId")
     )
+    @JsonManagedReference
     private List<StaffEntity> staff;
 }

@@ -1,5 +1,6 @@
 package lk.ijse.cropMonitoringSystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,8 +31,12 @@ public class StaffEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToMany(mappedBy = "staff",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "staff",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonBackReference
     private List<FieldEntity> fields; // Many-to-many relationship with fields
+
+    @OneToMany(mappedBy = "staffMember" ,cascade = CascadeType.ALL)
+    private List<VehicleEntity> vehics;
 
     enum Gender {
         MALE, FEMALE
