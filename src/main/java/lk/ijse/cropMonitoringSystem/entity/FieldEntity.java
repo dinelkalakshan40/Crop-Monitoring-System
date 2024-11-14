@@ -48,6 +48,6 @@ public class FieldEntity implements Serializable {
     //monitor_Log Entity
     @ManyToOne///
     @JoinColumn(name = "LogCode")
-    private MonitorLogEntity monitorLogs;
+    private MonitorLogEntity monitor_log;
 
 }

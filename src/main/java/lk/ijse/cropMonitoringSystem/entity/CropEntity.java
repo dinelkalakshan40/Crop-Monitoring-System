@@ -23,11 +23,11 @@ public class CropEntity implements Serializable {
     //field Entity
     @ManyToOne///
     @JoinColumn(name = "fieldCode",nullable = false)
-    private FieldEntity field;
+    private FieldEntity fieldCrops;
 
     //crop Entity
     @ManyToOne///
     @JoinColumn(name = "LogCode" ,nullable = false)
-    private MonitorLogEntity crops;
+    private MonitorLogEntity monitorCrop;
 
 }
