@@ -6,20 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "vehicle")
-public class VehicleEntity implements Serializable {
+@Table(name = "monitor_log")
+public class MonitorLogEntity implements Serializable {
     @Id
-    private String vehicleCode;
-    private String plateNumber;
-    private String category;
-    private String fuelType;
-    private String status;
-    private String remarks;
+    private String LogCode;
+    private String date;
+    private String logDetails;
+    private String observedImage;
     @ManyToOne
     @JoinColumn(name = "staffId",nullable = false)
     private StaffEntity staff;
+
+
 }

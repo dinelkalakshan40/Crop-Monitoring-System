@@ -35,8 +35,11 @@ public class StaffEntity implements Serializable {
     @JsonBackReference
     private List<FieldEntity> fields; // Many-to-many relationship with fields
 
-    @OneToMany(mappedBy = "staffMember" ,cascade = CascadeType.ALL)
-    private List<VehicleEntity> vehics;
+    @OneToMany(mappedBy = "staff" ,cascade = CascadeType.ALL)
+    private List<VehicleEntity> vehicles;
+
+    @OneToMany(mappedBy = "staff",cascade = CascadeType.ALL)
+    private List<MonitorLogEntity> monitorLogs;
 
     enum Gender {
         MALE, FEMALE

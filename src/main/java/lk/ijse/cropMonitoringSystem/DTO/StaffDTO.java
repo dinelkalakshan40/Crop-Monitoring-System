@@ -21,4 +21,5 @@ public class StaffDTO {
     private String contact;
     private String role;
     private List<FieldDTO> fields;
+    private List<VehicleDTO> vehicles;
 }
