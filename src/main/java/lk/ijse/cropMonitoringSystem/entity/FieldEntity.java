@@ -27,6 +27,7 @@ public class FieldEntity implements Serializable {
     @Column(columnDefinition = "LONGTEXT")
     private String fieldImage2;
 
+    //field_staff
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "field_staff",
@@ -35,4 +36,18 @@ public class FieldEntity implements Serializable {
     )
     @JsonManagedReference
     private List<StaffEntity> staff;
+
+    //crop Entity
+    @OneToMany(mappedBy = "fieldCrops")//
+    private List<CropEntity> crops;
+
+    //equipment Entity;
+    @OneToMany(mappedBy = "fieldEquipment")//
+    private List<EquipmentEntity> equipments;//
+
+    //monitor_Log Entity
+    @ManyToOne///
+    @JoinColumn(name = "LogCode")
+    private MonitorLogEntity monitorLogs;
+
 }
