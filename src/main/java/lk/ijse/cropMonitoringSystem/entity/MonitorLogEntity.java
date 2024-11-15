@@ -18,21 +18,20 @@ public class MonitorLogEntity implements Serializable {
     private String LogCode;
     private String date;
     private String logDetails;
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String observedImage;
 
     //staff Entity
-    @ManyToOne////
-    @JoinColumn(name = "staffId",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "staffId",nullable = true)
     private StaffEntity staff;
 
     // Field Entity
     @OneToMany(mappedBy = "monitor_log")//
     private List<FieldEntity> fields;
 
-
     //Crop Entity
     @OneToMany(mappedBy = "monitorCrop")///
     private List<CropEntity> crops;
-
-
 }

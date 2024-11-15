@@ -5,16 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MonitorDTO implements Serializable {
+public class CropDTO implements Serializable {
+    private String cropCode;
+    private String cropName;
+    private String cropImage;
+    private String category;
+    private String cropSeason;
     private String LogCode;
-    private String date;
-    private String logDetails;
-    private String observedImage;
-    private List<CropDTO> cropDTOS;
-    private String staffId;
 }

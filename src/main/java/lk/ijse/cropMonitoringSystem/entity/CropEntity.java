@@ -16,7 +16,8 @@ public class CropEntity implements Serializable {
     @Id
     private String cropCode;
     private String cropName;
-    private Long cropImage;
+    @Column(columnDefinition = "LONGTEXT")
+    private String cropImage;
     private String category;
     private String cropSeason;
 
@@ -25,9 +26,9 @@ public class CropEntity implements Serializable {
     @JoinColumn(name = "fieldCode",nullable = false)
     private FieldEntity fieldCrops;
 
-    //crop Entity
+    //monitor Entity
     @ManyToOne///
-    @JoinColumn(name = "LogCode" ,nullable = false)
+    @JoinColumn(name = "LogCode")
     private MonitorLogEntity monitorCrop;
 
 }
