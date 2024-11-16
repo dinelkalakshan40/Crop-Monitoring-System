@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,7 +109,25 @@ public class MonitorController {
         }
     }
 
-    @PutMapping(value = "/{LogCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
+    public ResponseEntity<List<Map<String, Object>>> getAllMonitorLogs() {
+        try {
+            // Fetch all monitor logs from the service
+            List<Map<String, Object>> monitorLogs = monitoringServiceIMPL.getAllMonitorLogs();
+
+            if (monitorLogs.isEmpty()) {
+                return ResponseEntity.noContent().build();  // Return 204 No Content if no logs are found
+            }
+
+            return ResponseEntity.ok(monitorLogs);  // Return 200 OK with the list of formatted logs
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body((List<Map<String, Object>>) Collections.singletonMap("error", "An error occurred while fetching monitor logs."));
+        }
+    }
+
+    @PutMapping(value = "/{LogCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateMonitorLog(
             @PathVariable("LogCode") String LogCode,
             @RequestPart("date") String date,
@@ -132,17 +147,18 @@ public class MonitorController {
             monitorDTO.setLogDetails(logDetails);
             monitorDTO.setObservedImage(base64Image);
             monitoringServiceIMPL.updateMonitorLog(monitorDTO);
-            return new ResponseEntity<>("MoniotrLog Updated",HttpStatus.CREATED);
-        }catch (DataPersistException e){
+            return new ResponseEntity<>("MoniotrLog Updated", HttpStatus.CREATED);
+        } catch (DataPersistException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Not Updated",HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
+            return new ResponseEntity<>("Not Updated", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @DeleteMapping(value = "/{LogCode}")
-    public ResponseEntity<String> deleteMonitoringLog(@PathVariable("LogCode") String LogCode ){
+    public ResponseEntity<String> deleteMonitoringLog(@PathVariable("LogCode") String LogCode) {
         String pattern = "^C-\\d{3}$";
         Pattern regex = Pattern.compile(pattern);
 

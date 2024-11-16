@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Base64;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -102,5 +102,28 @@ public class MonitoringServiceIMPL {
         } else {
             return false; // LogCode not found
         }
+    }
+    public List<Map<String, Object>> getAllMonitorLogs() {
+        List<MonitorLogEntity> monitorLogs = monitorLogRepository.findAll();
+
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (MonitorLogEntity logEntity : monitorLogs) {
+            Map<String, Object> logData = new HashMap<>();
+            logData.put("LogCode", logEntity.getLogCode());
+            logData.put("date", logEntity.getDate());  // Assuming date is already in String format
+            logData.put("logDetails", logEntity.getLogDetails());
+
+            // Extract the staffId from the related StaffEntity
+            String staffId = logEntity.getStaff() != null ? logEntity.getStaff().getStaffId(): null;
+            logData.put("staffId", staffId);
+
+            // Calculate image size in MB
+            double imageSizeMB = calculateImageSizeInMB(logEntity.getObservedImage());
+            logData.put("observedImage", String.format("%.3fMB", imageSizeMB));  // Format to 3 decimal places
+
+            response.add(logData);
+        }
+
+        return response;  // Return the formatted response list
     }
 }
