@@ -35,7 +35,7 @@ public class MonitoringServiceIMPL {
         } else {
             entity.setStaff(null);
         }
-        // Map cropDTOS if necessary
+
 
         monitorLogRepository.save(entity);
     }
@@ -84,13 +84,23 @@ public class MonitoringServiceIMPL {
             throw new IllegalArgumentException("MonitorLog with given LogCode not found.");
         }
 
-        // Update entity details
+        // Update entity
         MonitorLogEntity logEntity = optionalLog.get();
         logEntity.setDate(monitorDTO.getDate());
         logEntity.setLogDetails(monitorDTO.getLogDetails());
         logEntity.setObservedImage(monitorDTO.getObservedImage());
 
-        // Save updated entity
+
         monitorLogRepository.save(logEntity);
+    }
+    public boolean deleteMonitoringLog(String logCode) {
+        Optional<MonitorLogEntity> optionalLog = monitorLogRepository.findById(logCode);
+
+        if (optionalLog.isPresent()) {
+            monitorLogRepository.delete(optionalLog.get());
+            return true;
+        } else {
+            return false; // LogCode not found
+        }
     }
 }

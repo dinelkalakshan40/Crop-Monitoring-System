@@ -23,7 +23,7 @@ public class MonitorLogEntity implements Serializable {
     private String observedImage;
 
     //staff Entity
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "staffId",nullable = true)
     private StaffEntity staff;
 

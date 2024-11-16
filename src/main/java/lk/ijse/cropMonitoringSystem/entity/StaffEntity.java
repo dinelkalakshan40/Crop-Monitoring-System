@@ -40,7 +40,7 @@ public class StaffEntity implements Serializable {
     private List<VehicleEntity> vehicles;///
 
     //MonitorLog Entity
-    @OneToMany(mappedBy = "staff")
+    @OneToMany(mappedBy = "staff",cascade = CascadeType.PERSIST)
     private List<MonitorLogEntity> monitorLogs;
 
     //EquipmentEntity

@@ -141,4 +141,28 @@ public class MonitorController {
             return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @DeleteMapping(value = "/{LogCode}")
+    public ResponseEntity<String> deleteMonitoringLog(@PathVariable("LogCode") String LogCode ){
+        String pattern = "^C-\\d{3}$";
+        Pattern regex = Pattern.compile(pattern);
+
+        // Validate the log code format
+        if (!regex.matcher(LogCode).matches()) {
+            return ResponseEntity.badRequest().body("Invalid LogCode format.");
+        }
+        try {
+            // Call the service method to delete the log
+            boolean isDeleted = monitoringServiceIMPL.deleteMonitoringLog(LogCode);
+
+            if (isDeleted) {
+                return ResponseEntity.ok("MonitorLog deleted successfully. StaffId relationships remain intact.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("LogCode not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while deleting the MonitorLog.");
+        }
+    }
 }
