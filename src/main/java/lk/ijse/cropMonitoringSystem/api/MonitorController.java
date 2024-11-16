@@ -4,21 +4,23 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ijse.cropMonitoringSystem.DTO.CropDTO;
 import lk.ijse.cropMonitoringSystem.DTO.MonitorDTO;
+import lk.ijse.cropMonitoringSystem.entity.MonitorLogEntity;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.service.impl.MonitoringServiceIMPL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/v1/monitors")
@@ -69,6 +71,43 @@ public class MonitorController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Internal server error",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping(value = "/{LogCode}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?>getSelectedLog(@PathVariable ("LogCode") String LogCode){
+        String pattern = "^C-\\d{3}$";
+        Pattern regex = Pattern.compile(pattern);
+
+        // Check if LogCode matches the regex
+        if (!regex.matcher(LogCode).matches()) {
+            return ResponseEntity.badRequest().body("Invalid LogCode format.");
+        }
+
+        try {
+            // Fetch the log using the service
+            MonitorLogEntity logEntity = monitoringServiceIMPL.getSelectedLog(LogCode);
+
+            // Check if logEntity is null
+            if (logEntity == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("LogCode not found.");
+            }
+            double imageSizeMB = monitoringServiceIMPL.calculateImageSizeInMB(logEntity.getObservedImage());
+            String staffId = (logEntity.getStaff() != null) ? logEntity.getStaff().getStaffId() : null;
+
+            // Format the response
+            Map<String, Object> response = new HashMap<>();
+            response.put("LogCode", logEntity.getLogCode());
+            response.put("date", logEntity.getDate());
+            response.put("logDetails", logEntity.getLogDetails());
+            response.put("observedImage", String.format("%.3fMB", imageSizeMB));
+            response.put("staffId",staffId);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while processing the request.");
         }
     }
 }
