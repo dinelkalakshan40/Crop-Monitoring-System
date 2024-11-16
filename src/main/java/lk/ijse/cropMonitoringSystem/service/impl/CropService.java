@@ -22,14 +22,15 @@ public class CropService {
     private MonitoringRepo monitoringRepo;
     @Autowired
     private CropRepo cropRepo;
-    public void saveCrop(CropDTO cropDTO, MultipartFile cropImage, double sizeInMB) throws IOException {
+
+    public void saveCrop(CropDTO cropDTO, MultipartFile cropImage) throws IOException {
         CropEntity cropEntity = new CropEntity();
         cropEntity.setCropCode(cropDTO.getCropCode());
         cropEntity.setCropName(cropDTO.getCropName());
 
         // Convert the MultipartFile (image) to Base64 and set it
-        byte[] cropImageBytes = cropImage.getBytes();
-        String base64Image = Base64.getEncoder().encodeToString(cropImageBytes);
+
+        String base64Image = Base64.getEncoder().encodeToString(cropImage.getBytes());
         cropEntity.setCropImage(base64Image);  // Store as Base64 string
         cropEntity.setCategory(cropDTO.getCategory());
         cropEntity.setCropSeason(cropDTO.getCropSeason());
@@ -40,11 +41,12 @@ public class CropService {
             cropEntity.setMonitorCrop(monitoringRepo.findById(cropDTO.getLogCode()).orElse(null));
         }
 
-        // Optionally log or store the image size in MB
-        System.out.println("Crop image size: " + String.format("%.2f MB", sizeInMB));
-
         // Save the entity
         cropRepo.save(cropEntity);
+    }
+    public CropEntity getSelectedCrop(String cropCode) {
+        // Use JPA's findById method or a custom query
+        return cropRepo.findById(cropCode).orElse(null);
     }
 
 }
