@@ -16,4 +16,5 @@ public class CropDTO implements Serializable {
     private String category;
     private String cropSeason;
     private String LogCode;
+    private String fieldCode;
 }

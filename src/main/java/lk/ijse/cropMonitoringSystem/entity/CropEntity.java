@@ -16,6 +16,7 @@ public class CropEntity implements Serializable {
     @Id
     private String cropCode;
     private String cropName;
+    @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String cropImage;
     private String category;
