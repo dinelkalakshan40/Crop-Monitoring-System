@@ -34,7 +34,7 @@ public class MonitorController {
             @RequestPart("date") String date,
             @RequestPart("logDetails") String logDetails,
             @RequestPart("observedImage") MultipartFile observedImage,
-            @RequestPart(value = "staffId", required = false) String staffId ) {
+            @RequestPart(value = "staffId", required = false) String staffId) {
         try {
             // Extract file type (e.g., image/png or image/jpeg)
             String contentType = observedImage.getContentType();
@@ -67,14 +67,15 @@ public class MonitorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the request.");
         } catch (DataPersistException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Bad request: Invalid data",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Bad request: Invalid data", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Internal server error",HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "/{LogCode}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?>getSelectedLog(@PathVariable ("LogCode") String LogCode){
+
+    @GetMapping(value = "/{LogCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getSelectedLog(@PathVariable("LogCode") String LogCode) {
         String pattern = "^C-\\d{3}$";
         Pattern regex = Pattern.compile(pattern);
 
@@ -100,7 +101,7 @@ public class MonitorController {
             response.put("date", logEntity.getDate());
             response.put("logDetails", logEntity.getLogDetails());
             response.put("observedImage", String.format("%.3fMB", imageSizeMB));
-            response.put("staffId",staffId);
+            response.put("staffId", staffId);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -108,6 +109,36 @@ public class MonitorController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while processing the request.");
+        }
+    }
+
+    @PutMapping(value = "/{LogCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateMonitorLog(
+            @PathVariable("LogCode") String LogCode,
+            @RequestPart("date") String date,
+            @RequestPart("logDetails") String logDetails,
+            @RequestPart("observedImage") MultipartFile observedImage) {
+        try {
+            String contentType = observedImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest().body("File is not a valid image.");
+            }
+            String base64Image = "data:" + observedImage.getContentType() + ";base64," +
+                    Base64.getEncoder().encodeToString(observedImage.getBytes());
+
+            MonitorDTO monitorDTO = new MonitorDTO();
+            monitorDTO.setLogCode(LogCode);
+            monitorDTO.setDate(date);
+            monitorDTO.setLogDetails(logDetails);
+            monitorDTO.setObservedImage(base64Image);
+            monitoringServiceIMPL.updateMonitorLog(monitorDTO);
+            return new ResponseEntity<>("MoniotrLog Updated",HttpStatus.CREATED);
+        }catch (DataPersistException e){
+            e.printStackTrace();
+            return new ResponseEntity<>("Not Updated",HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

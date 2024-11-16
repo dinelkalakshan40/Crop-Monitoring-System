@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -71,5 +72,25 @@ public class MonitoringServiceIMPL {
 
         // Convert bytes to MB (1 MB = 1024 * 1024 bytes)
         return sizeInBytes / (1024 * 1024);
+    }
+    public void updateMonitorLog(MonitorDTO monitorDTO){
+        if (monitorDTO.getLogCode() == null || monitorDTO.getLogCode().isEmpty()) {
+            throw new IllegalArgumentException("LogCode must not be null or empty.");
+        }
+
+        // Retrieve the entity from the repository
+        Optional<MonitorLogEntity> optionalLog = monitorLogRepository.findById(monitorDTO.getLogCode());
+        if (optionalLog.isEmpty()) {
+            throw new IllegalArgumentException("MonitorLog with given LogCode not found.");
+        }
+
+        // Update entity details
+        MonitorLogEntity logEntity = optionalLog.get();
+        logEntity.setDate(monitorDTO.getDate());
+        logEntity.setLogDetails(monitorDTO.getLogDetails());
+        logEntity.setObservedImage(monitorDTO.getObservedImage());
+
+        // Save updated entity
+        monitorLogRepository.save(logEntity);
     }
 }
