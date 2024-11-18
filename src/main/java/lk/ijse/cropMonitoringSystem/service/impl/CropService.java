@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 @Transactional
@@ -45,8 +46,11 @@ public class CropService {
         cropRepo.save(cropEntity);
     }
     public CropEntity getSelectedCrop(String cropCode) {
-        // Use JPA's findById method or a custom query
+
         return cropRepo.findById(cropCode).orElse(null);
+    }
+    public List<CropEntity> getAllCrops() {
+        return cropRepo.findAll(); // Retrieves all crop entities
     }
 
 }

@@ -12,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/crops")
@@ -101,6 +103,32 @@ public class CropController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while retrieving the crop details.");
+        }
+    }
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CropDTO>> getAllCrops() {
+        try {
+            List<CropDTO> crops = cropService.getAllCrops().stream().map(cropEntity -> {
+                CropDTO cropDTO = new CropDTO();
+                cropDTO.setCropCode(cropEntity.getCropCode());
+                cropDTO.setCropName(cropEntity.getCropName());
+                cropDTO.setCategory(cropEntity.getCategory());
+                cropDTO.setCropSeason(cropEntity.getCropSeason());
+                cropDTO.setFieldCode(cropEntity.getFieldCrops().getFieldCode());
+                if (cropEntity.getMonitorCrop() != null) {
+                    cropDTO.setLogCode(cropEntity.getMonitorCrop().getLogCode());
+                }
+                if (cropEntity.getCropImage() != null) {
+                    double sizeInBytes = cropEntity.getCropImage().length();
+                    cropDTO.setCropImage(String.format("%.3f MB", sizeInBytes / (1024 * 1024)));
+                }
+                return cropDTO;
+            }).collect(Collectors.toList());
+
+            return ResponseEntity.ok(crops);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
