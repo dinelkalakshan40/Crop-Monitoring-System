@@ -171,6 +171,22 @@ public class CropController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update crop.");
         }
     }
+    @DeleteMapping(value = "/{cropCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteCrop(@PathVariable("cropCode") String cropCode) {
+        if (!isValidCropCode(cropCode)) {
+            return ResponseEntity.badRequest().body("Invalid CropCode format. It should be 'Crop-Id-00'.");
+        }
+        try {
+            cropService.deleteCrop(cropCode);
+            return ResponseEntity.ok("Crop deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete crop.");
+        }
+    }
+
 
 
 }

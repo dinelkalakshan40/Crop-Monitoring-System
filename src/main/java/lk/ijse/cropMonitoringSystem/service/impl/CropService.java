@@ -78,5 +78,10 @@ public class CropService {
 
         cropRepo.save(cropEntity);
     }
+    public void deleteCrop(String cropCode) {
+        CropEntity cropEntity = cropRepo.findById(cropCode)
+                .orElseThrow(() -> new RuntimeException("Crop not found with code: " + cropCode));
+        cropRepo.delete(cropEntity);
+    }
 
 }
