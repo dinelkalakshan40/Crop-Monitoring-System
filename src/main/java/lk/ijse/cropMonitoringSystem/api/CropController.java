@@ -131,5 +131,46 @@ public class CropController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @PutMapping(value = "/{cropCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateCrop(
+            @PathVariable("cropCode") String cropCode,
+            @RequestPart("cropName") String cropName,
+            @RequestPart("category") String category,
+            @RequestPart("cropSeason") String cropSeason,
+            @RequestPart(value = "cropImage", required = false) MultipartFile cropImage,
+            @RequestPart("fieldCode") String fieldCode,
+            @RequestPart(value = "logCode", required = false) String logCode) {
+        if (!isValidCropCode(cropCode)) {
+            return ResponseEntity.badRequest().body("Invalid CropCode format. It should be 'Crop-Id-00'.");
+        }
+        try {
+            // Validate image if present
+            double imageSizeMB = 0.0;
+            if (cropImage != null && !cropImage.isEmpty()) {
+                String contentType = cropImage.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    return ResponseEntity.badRequest().body("Invalid image file format.");
+                }
+                imageSizeMB = (double) cropImage.getSize() / (1024 * 1024);
+            }
+
+            // Create CropDTO
+            CropDTO cropDTO = new CropDTO();
+            cropDTO.setCropCode(cropCode);
+            cropDTO.setCropName(cropName);
+            cropDTO.setCategory(category);
+            cropDTO.setCropSeason(cropSeason);
+            cropDTO.setFieldCode(fieldCode);
+            cropDTO.setLogCode(logCode);
+
+            // Update the crop
+            cropService.updateCrop(cropDTO, cropImage, imageSizeMB);
+            return ResponseEntity.ok("Crop updated successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update crop.");
+        }
+    }
+
 
 }

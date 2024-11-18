@@ -52,5 +52,31 @@ public class CropService {
     public List<CropEntity> getAllCrops() {
         return cropRepo.findAll(); // Retrieves all crop entities
     }
+    //update crop
+    public void updateCrop(CropDTO cropDTO, MultipartFile cropImage, double imageSizeMB) {
+        CropEntity cropEntity = cropRepo.findById(cropDTO.getCropCode())
+                .orElseThrow(() -> new RuntimeException("Crop not found with code: " + cropDTO.getCropCode()));
+
+        cropEntity.setCropName(cropDTO.getCropName());
+        cropEntity.setCategory(cropDTO.getCategory());
+        cropEntity.setCropSeason(cropDTO.getCropSeason());
+
+        // Update field reference
+        cropEntity.setFieldCrops(fieldRepository.findById(cropDTO.getFieldCode()).orElseThrow(
+                () -> new RuntimeException("Field not found with code: " + cropDTO.getFieldCode())
+        ));
+
+        // Update monitor reference if provided
+        if (cropDTO.getLogCode() != null) {
+            cropEntity.setMonitorCrop(monitoringRepo.findById(cropDTO.getLogCode()).orElse(null));
+        }
+
+        // Update crop image
+        if (cropImage != null && !cropImage.isEmpty()) {
+            cropEntity.setCropImage(String.format("%.2f MB", imageSizeMB));
+        }
+
+        cropRepo.save(cropEntity);
+    }
 
 }
