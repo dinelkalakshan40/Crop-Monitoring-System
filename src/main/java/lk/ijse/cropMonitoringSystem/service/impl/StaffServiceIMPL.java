@@ -3,11 +3,8 @@ package lk.ijse.cropMonitoringSystem.service.impl;
 import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.entity.FieldEntity;
 import lk.ijse.cropMonitoringSystem.entity.StaffEntity;
-import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.repository.FieldRepository;
 import lk.ijse.cropMonitoringSystem.repository.StaffRepo;
-import lk.ijse.cropMonitoringSystem.service.StaffService;
-import lk.ijse.cropMonitoringSystem.util.Mapping;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class StaffServiceIMPL implements StaffService {
+public class StaffServiceIMPL {
     @Autowired
     private StaffRepo staffRepo;
     @Autowired
@@ -62,41 +59,27 @@ public class StaffServiceIMPL implements StaffService {
 
         // Save the staff entity, which will save the association with fields
         staffRepo.save(staffEntity);
-        /*StaffEntity staffEntity = modelMapper.map(staffDTO, StaffEntity.class);
+    }
+    public List<StaffDTO> getAllStaff() {
+        // Fetch all staff entities
+        List<StaffEntity> staffEntities = staffRepo.findAll();
 
-        List<FieldEntity> fieldEntities = staffDTO.getFields().stream()
-                .map(fieldDTO -> {
-                    FieldEntity fieldEntity = modelMapper.map(fieldDTO, FieldEntity.class);
-                    FieldEntity existingField = fieldRepository.findById(fieldEntity.getFieldCode())
-                            .orElse(fieldEntity);
-                    existingField.getStaff().add(staffEntity); // Associate staff with field
-                    return existingField;
+        // Map to StaffDTO with only the required fields
+        return staffEntities.stream()
+                .map(staff -> {
+                    StaffDTO dto = new StaffDTO();
+                    dto.setStaffId(staff.getStaffId());
+                    dto.setFirstName(staff.getFirstName());
+                    dto.setLastName(staff.getLastName());
+                    dto.setDesignation(staff.getDesignation());
+                    dto.setGender(String.valueOf(staff.getGender()));
+                    dto.setDob(staff.getDob());
+                    dto.setJoinedDate(staff.getJoinedDate());
+                    dto.setAddress(staff.getAddress());
+                    dto.setContact(staff.getContact());
+                    dto.setRole(String.valueOf(staff.getRole()));
+                    return dto;
                 })
                 .collect(Collectors.toList());
-
-        staffEntity.setFields(fieldEntities);
-        staffRepo.save(staffEntity);*/
-        /*// Convert StaffDTO to StaffEntity
-        StaffEntity staffEntity = modelMapper.map(staffDTO,StaffEntity.class);
-
-        // Map and associate FieldEntity objects
-        List<FieldEntity> fieldEntities = staffDTO.getFields().stream()
-                .map(fieldDTO -> {
-
-                    // Convert FieldDTO to FieldEntity
-                    FieldEntity fieldEntity = modelMapper.map(fieldDTO, FieldEntity.class);
-
-                    // Check if the staff already exists in the database
-                    return fieldRepository.findById(fieldEntity.getFieldCode())
-                            .orElse(fieldEntity); // Use the existing entity if found, or the new one
-                })
-                .collect(Collectors.toList());
-
-
-        // Set staff list in the field entity
-        staffEntity.setFields(fieldEntities);
-
-        // Save the field entity along with its associated staff
-        staffRepo.save(staffEntity);*/
     }
 }
