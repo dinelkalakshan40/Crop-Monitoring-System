@@ -1,6 +1,7 @@
 package lk.ijse.cropMonitoringSystem.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,7 +45,7 @@ public class StaffEntity implements Serializable {
     private List<MonitorLogEntity> monitorLogs;
 
     //EquipmentEntity
-    @OneToMany(mappedBy = "staff",cascade = CascadeType.ALL)///
+    @OneToMany(mappedBy = "staffEquipment")///
     private List<EquipmentEntity> equipments;
 
     enum Gender {

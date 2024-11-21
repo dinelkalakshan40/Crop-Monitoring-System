@@ -1,5 +1,7 @@
 package lk.ijse.cropMonitoringSystem;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +16,12 @@ public class CropMonitoringSystemApplication {
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
+    }
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Hibernate6Module());
+        return objectMapper;
     }
 
 }
