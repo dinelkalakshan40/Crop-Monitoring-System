@@ -47,5 +47,31 @@ public class EquipmentController {
                     .body(Map.of("error", "Failed to fetch equipment data."));
         }
     }
+    @GetMapping(value = "/{equipmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getSelectedEquipment(@PathVariable String equipmentId) {
+        try {
+            // Validate equipmentId
+            if (!equipmentId.matches("^EqID-\\d{3}$")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "Invalid equipment ID format'"));
+            }
+
+            // Fetch equipment by ID
+            EquipmentDTO equipmentDTO = equipmentService.getEquipmentById(equipmentId);
+            if (equipmentDTO == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Equipment not found with ID: " + equipmentId));
+            }
+
+            // Return the equipment data
+            return ResponseEntity.ok(equipmentDTO);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to fetch equipment data."));
+        }
+    }
+
 
 }

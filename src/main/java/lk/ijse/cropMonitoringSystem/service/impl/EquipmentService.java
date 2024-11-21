@@ -69,4 +69,9 @@ public class EquipmentService {
                 entity.getFieldEquipment() != null ? entity.getFieldEquipment().getFieldCode() : null
         );
     }
+    public EquipmentDTO getEquipmentById(String equipmentId) {
+        return equipmentRepo.findById(equipmentId)
+                .map(this::convertToDTO)
+                .orElse(null);
+    }
 }
