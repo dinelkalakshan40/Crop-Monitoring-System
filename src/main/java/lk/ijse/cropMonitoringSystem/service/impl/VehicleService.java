@@ -80,4 +80,9 @@ public class VehicleService {
 
         vehicleRepo.save(entity);
     }
+    public void deleteVehicle(String vehicleCode) {
+        VehicleEntity entity = vehicleRepo.findById(vehicleCode)
+                .orElseThrow(() -> new RuntimeException("Vehicle with code " + vehicleCode + " not found"));
+        vehicleRepo.delete(entity);
+    }
 }

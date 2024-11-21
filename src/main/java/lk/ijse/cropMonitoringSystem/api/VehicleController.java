@@ -82,5 +82,24 @@ public class VehicleController {
                     .body(Map.of("error", "An unexpected error occurred while updating the vehicle."));
         }
     }
+    @DeleteMapping(value = "/{vehicleCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteVehicle(@PathVariable String vehicleCode) {
+        if (!vehicleCode.matches("^VEH-\\d{3}$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Invalid vehicle code format"));
+        }
+        try {
+            vehicleService.deleteVehicle(vehicleCode);
+            return ResponseEntity.ok(Map.of("message", "Vehicle deleted successfully."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "An unexpected error occurred while deleting the vehicle."));
+        }
+    }
+
 
 }
