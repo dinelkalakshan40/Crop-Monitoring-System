@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("api/v1/vehicle")
@@ -19,6 +20,9 @@ public class VehicleController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveVehicle(@RequestBody VehicleDTO vehicleDTO){
+        if (!vehicleDTO.getVehicleCode().matches("^VEH-00\\\\d*$")) {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle code format. Expected format: VEH-XXX");
+        }
         try {
             vehicleService.savedVehicle(vehicleDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("Vehicle saved successfully.");
