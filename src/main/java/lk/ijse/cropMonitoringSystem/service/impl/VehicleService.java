@@ -64,4 +64,20 @@ public class VehicleService {
         dto.setStaffId(entity.getStaff() != null ? entity.getStaff().getStaffId() : "Staff ID is Null");
         return dto;
     }
+    public void updateVehicle(String vehicleCode, VehicleDTO vehicleDTO) {
+        VehicleEntity entity = vehicleRepo.findById(vehicleCode)
+                .orElseThrow(() -> new RuntimeException("Vehicle with code " + vehicleCode + " not found"));
+
+        entity.setPlateNumber(vehicleDTO.getPlateNumber());
+        entity.setCategory(vehicleDTO.getCategory());
+        entity.setFuelType(vehicleDTO.getFuelType());
+        entity.setStatus(vehicleDTO.getStatus());
+        entity.setRemarks(vehicleDTO.getRemarks());
+        if (vehicleDTO.getStaffId() != null) {
+            entity.setStaff(staffRepo.findById(vehicleDTO.getStaffId())
+                    .orElseThrow(() -> new RuntimeException("Staff with ID " + vehicleDTO.getStaffId() + " not found")));
+        }
+
+        vehicleRepo.save(entity);
+    }
 }
