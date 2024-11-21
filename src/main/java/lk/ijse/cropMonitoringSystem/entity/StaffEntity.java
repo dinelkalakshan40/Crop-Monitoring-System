@@ -48,11 +48,11 @@ public class StaffEntity implements Serializable {
     @OneToMany(mappedBy = "staffEquipment")///
     private List<EquipmentEntity> equipments;
 
-    enum Gender {
+    public enum Gender {
         MALE, FEMALE
     }
 
-    enum Role {
+    public enum Role {
         MANAGER, WORKER, ASSISTANT, TECHNICIAN
     }
 }

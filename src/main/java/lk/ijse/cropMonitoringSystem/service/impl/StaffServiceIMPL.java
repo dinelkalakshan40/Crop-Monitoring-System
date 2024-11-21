@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,4 +83,50 @@ public class StaffServiceIMPL {
                 })
                 .collect(Collectors.toList());
     }
+    public StaffDTO getSelectedStaff(String staffId) {
+        // Fetch staff entity by ID
+        return staffRepo.findById(staffId)
+                .map(staff -> {
+                    // Map to StaffDTO with only the required fields
+                    StaffDTO dto = new StaffDTO();
+                    dto.setStaffId(staff.getStaffId());
+                    dto.setFirstName(staff.getFirstName());
+                    dto.setLastName(staff.getLastName());
+                    dto.setDesignation(staff.getDesignation());
+                    dto.setGender(String.valueOf(staff.getGender()));
+                    dto.setDob(staff.getDob());
+                    dto.setJoinedDate(staff.getJoinedDate());
+                    dto.setAddress(staff.getAddress());
+                    dto.setContact(staff.getContact());
+                    dto.setRole(String.valueOf(staff.getRole()));
+                    return dto;
+                })
+                .orElse(null); // Return null if not found
+    }
+    public boolean updateStaff(String staffId, StaffDTO staffDTO) {
+        Optional<StaffEntity> staffEntityOptional = staffRepo.findById(staffId);
+
+        if (staffEntityOptional.isPresent()) {
+            StaffEntity staffEntity = staffEntityOptional.get();
+
+            // Update fields
+            staffEntity.setFirstName(staffDTO.getFirstName());
+            staffEntity.setLastName(staffDTO.getLastName());
+            staffEntity.setDesignation(staffDTO.getDesignation());
+            staffEntity.setGender(StaffEntity.Gender.valueOf(staffDTO.getGender()));
+            staffEntity.setDob(staffDTO.getDob());
+            staffEntity.setJoinedDate(staffDTO.getJoinedDate());
+            staffEntity.setAddress(staffDTO.getAddress());
+            staffEntity.setContact(staffDTO.getContact());
+            staffEntity.setRole(StaffEntity.Role.valueOf(staffDTO.getRole()));
+
+            // Save updated entity
+            staffRepo.save(staffEntity);
+            return true;
+        } else {
+            return false; // Staff not found
+        }
+    }
+
+
 }

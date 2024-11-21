@@ -43,5 +43,39 @@ public class StaffController {
                     .body(new ArrayList<>()); // Return empty list in case of failure
         }
     }
+    @GetMapping(value = "/{staffId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<StaffDTO> getSelectedStaff(@PathVariable String staffId) {
+        try {
+            StaffDTO staffDTO = staffService.getSelectedStaff(staffId); // Fetch staff by ID
+            if (staffDTO != null) {
+                return ResponseEntity.ok(staffDTO); // Return the staff details
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(null); // Return 404 if staff not found
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null); // Return 500 in case of failure
+        }
+    }
+    @PutMapping(value = "/{staffId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateStaff(@PathVariable String staffId, @RequestBody StaffDTO staffDTO) {
+        try {
+            boolean isUpdated = staffService.updateStaff(staffId, staffDTO);
+            if (isUpdated) {
+                return ResponseEntity.ok("Staff updated successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Staff with ID " + staffId + " not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to update staff.");
+        }
+    }
+
+
 
 }
