@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 public class VehicleService {
@@ -30,5 +33,19 @@ public class VehicleService {
         ));
         vehicleRepo.save(entity);
 
+    }
+    public List<VehicleDTO> getAllVehicles() {
+        List<VehicleEntity> entities = vehicleRepo.findAll();
+        return entities.stream().map(entity -> {
+            VehicleDTO dto = new VehicleDTO();
+            dto.setVehicleCode(entity.getVehicleCode());
+            dto.setPlateNumber(entity.getPlateNumber());
+            dto.setCategory(entity.getCategory());
+            dto.setFuelType(entity.getFuelType());
+            dto.setStatus(entity.getStatus());
+            dto.setRemarks(entity.getRemarks());
+            dto.setStaffId(entity.getStaff() != null ? entity.getStaff().getStaffId(): "N/A");
+            return dto;
+        }).collect(Collectors.toList());
     }
 }
