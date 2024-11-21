@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("api/v1/staff")
@@ -75,7 +76,18 @@ public class StaffController {
                     .body("Failed to update staff.");
         }
     }
-
-
-
+    @DeleteMapping("/{staffId}")
+    public ResponseEntity<String> deleteStaff(@PathVariable String staffId) {
+        try {
+            staffService.deleteStaffByStaffId(staffId);
+            return ResponseEntity.ok("Staff deleted successfully.");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Staff member not found with ID: " + staffId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to delete staff.");
+        }
+    }
 }

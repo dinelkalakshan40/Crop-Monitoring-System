@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -127,6 +128,9 @@ public class StaffServiceIMPL {
             return false; // Staff not found
         }
     }
-
-
+    public void deleteStaffByStaffId(String staffId) {
+        StaffEntity staffEntity = staffRepo.findById(staffId)
+                .orElseThrow(() -> new NoSuchElementException("Staff member not found with ID: " + staffId));
+        staffRepo.delete(staffEntity);
+    }
 }

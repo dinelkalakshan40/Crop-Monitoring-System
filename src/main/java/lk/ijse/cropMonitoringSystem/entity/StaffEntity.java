@@ -32,7 +32,7 @@ public class StaffEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToMany(mappedBy = "staff",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "staff",cascade = {CascadeType.ALL, CascadeType.MERGE})
     @JsonBackReference
     private List<FieldEntity> fields; // Many-to-many relationship with fields
 
@@ -41,11 +41,11 @@ public class StaffEntity implements Serializable {
     private List<VehicleEntity> vehicles;///
 
     //MonitorLog Entity
-    @OneToMany(mappedBy = "staff",cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "staff",cascade = CascadeType.ALL)
     private List<MonitorLogEntity> monitorLogs;
 
     //EquipmentEntity
-    @OneToMany(mappedBy = "staffEquipment")///
+    @OneToMany(mappedBy = "staffEquipment",cascade = CascadeType.ALL)
     private List<EquipmentEntity> equipments;
 
     public enum Gender {
