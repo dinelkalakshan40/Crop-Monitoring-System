@@ -116,5 +116,11 @@ public class EquipmentService {
         EquipmentEntity updatedEntity = equipmentRepo.save(existingEntity);
         return convertToDTO(updatedEntity);
     }
-
+    public void deleteEquipment(String equipmentId) {
+        Optional<EquipmentEntity> optionalEntity = equipmentRepo.findById(equipmentId);
+        if (!optionalEntity.isPresent()) {
+            throw new RuntimeException("Equipment not found with ID: " + equipmentId);
+        }
+        equipmentRepo.delete(optionalEntity.get());
+    }
 }

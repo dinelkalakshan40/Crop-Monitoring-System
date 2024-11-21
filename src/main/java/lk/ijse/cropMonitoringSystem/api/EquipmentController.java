@@ -92,7 +92,21 @@ public class EquipmentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update equipment.");
         }
     }
-
-
-
+    @DeleteMapping(value = "/{equipmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteEquipment(@PathVariable("equipmentId") String equipmentId) {
+        try {
+            if (!equipmentId.matches("^EqID-\\d{3}$")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(String.valueOf(Map.of("error", "Invalid equipment ID format'")));
+            }
+            // Call service to delete the equipment by its ID
+            equipmentService.deleteEquipment(equipmentId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Equipment deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete equipment.");
+        }
+    }
 }
