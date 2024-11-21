@@ -8,10 +8,17 @@ import lk.ijse.cropMonitoringSystem.repository.EquipmentRepo;
 import lk.ijse.cropMonitoringSystem.repository.FieldRepository;
 import lk.ijse.cropMonitoringSystem.repository.StaffRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -52,6 +59,7 @@ public class EquipmentService {
         equipmentEntity.setFieldEquipment(field);
         equipmentRepo.save(equipmentEntity);
     }
+    //getAll
     public List<EquipmentDTO> getAllEquipment() {
         List<EquipmentEntity> equipmentEntities = equipmentRepo.findAll();
         return equipmentEntities.stream()
@@ -74,4 +82,39 @@ public class EquipmentService {
                 .map(this::convertToDTO)
                 .orElse(null);
     }
+    //update
+    public EquipmentDTO updateEquipment(String equipmentId, EquipmentDTO equipmentDTO) {
+        // Find the EquipmentEntity
+        Optional<EquipmentEntity> optionalEntity = equipmentRepo.findById(equipmentId);
+
+        if (!optionalEntity.isPresent()) {
+            throw new RuntimeException("Equipment not found with ID: " + equipmentId);
+        }
+
+        EquipmentEntity existingEntity = optionalEntity.get();
+
+        // Update the DTO
+        existingEntity.setName(equipmentDTO.getName());
+        existingEntity.setType(equipmentDTO.getType());
+        existingEntity.setStatus(equipmentDTO.getStatus());
+
+        //Staff ID  update
+        if (equipmentDTO.getStaffId() != null) {
+            StaffEntity staff = staffRepo.findById(equipmentDTO.getStaffId()).orElseThrow(
+                    () -> new RuntimeException("Staff not found with ID: " + equipmentDTO.getStaffId()));
+            existingEntity.setStaffEquipment(staff);
+        }
+
+        // Field Code  update
+        if (equipmentDTO.getFieldCode() != null) {
+            FieldEntity field = fieldRepo.findById(equipmentDTO.getFieldCode()).orElseThrow(
+                    () -> new RuntimeException("Field not found with code: " + equipmentDTO.getFieldCode()));
+            existingEntity.setFieldEquipment(field);
+        }
+
+        // Save the updated entity return updated DTO
+        EquipmentEntity updatedEntity = equipmentRepo.save(existingEntity);
+        return convertToDTO(updatedEntity);
+    }
+
 }
