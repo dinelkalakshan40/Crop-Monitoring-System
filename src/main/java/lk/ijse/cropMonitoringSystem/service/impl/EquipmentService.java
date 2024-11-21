@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class EquipmentService {
@@ -49,5 +51,22 @@ public class EquipmentService {
                 .orElseThrow(() -> new RuntimeException("Field not found with code: " + equipmentDTO.getFieldCode()));
         equipmentEntity.setFieldEquipment(field);
         equipmentRepo.save(equipmentEntity);
+    }
+    public List<EquipmentDTO> getAllEquipment() {
+        List<EquipmentEntity> equipmentEntities = equipmentRepo.findAll();
+        return equipmentEntities.stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    private EquipmentDTO convertToDTO(EquipmentEntity entity) {
+        return new EquipmentDTO(
+                entity.getEquipmentId(),
+                entity.getName(),
+                entity.getType(),
+                entity.getStatus(),
+                entity.getStaffEquipment() != null ? entity.getStaffEquipment().getStaffId(): null,
+                entity.getFieldEquipment() != null ? entity.getFieldEquipment().getFieldCode() : null
+        );
     }
 }
