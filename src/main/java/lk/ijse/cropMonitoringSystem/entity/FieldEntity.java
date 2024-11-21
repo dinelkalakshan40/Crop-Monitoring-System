@@ -20,7 +20,7 @@ public class FieldEntity implements Serializable {
     @Id
     private String fieldCode;
     private String fieldName;
-    private Point  fieldLocation; // represents a location in (x, y) coordinate space
+    private String  fieldLocation;
     private Double fieldSize;
     @Column(columnDefinition = "LONGTEXT")
     private String fieldImage1;

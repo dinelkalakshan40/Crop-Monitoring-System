@@ -4,9 +4,11 @@ import jakarta.persistence.EntityNotFoundException;
 import lk.ijse.cropMonitoringSystem.DTO.FieldDTO;
 import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.entity.FieldEntity;
+import lk.ijse.cropMonitoringSystem.entity.MonitorLogEntity;
 import lk.ijse.cropMonitoringSystem.entity.StaffEntity;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.repository.FieldRepository;
+import lk.ijse.cropMonitoringSystem.repository.MonitoringRepo;
 import lk.ijse.cropMonitoringSystem.repository.StaffRepo;
 import lk.ijse.cropMonitoringSystem.service.FieldService;
 import lk.ijse.cropMonitoringSystem.util.AppUtil;
@@ -33,6 +35,9 @@ public class FieldServiceIMPL implements FieldService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private MonitoringRepo monitoringRepo;
+
     @Transactional
     public void saveField(FieldDTO fieldDTO) {
 
@@ -54,6 +59,12 @@ public class FieldServiceIMPL implements FieldService {
 
         // Set staff list in the field entity
         fieldEntity.setStaff(staffEntities);
+
+        if (fieldDTO.getLogCode() != null) {
+            MonitorLogEntity logEntity = monitoringRepo.findById(fieldDTO.getLogCode())
+                    .orElseThrow(() -> new RuntimeException("Log not found for LogCode: " + fieldDTO.getLogCode()));
+            fieldEntity.setMonitor_log(logEntity); // Assuming a relation exists in FieldEntity
+        }
 
         // Save the field entity along with its associated staff
         fieldRepository.save(fieldEntity);

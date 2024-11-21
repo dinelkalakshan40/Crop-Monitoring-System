@@ -12,9 +12,10 @@ import java.util.List;
 public class FieldDTO {
     private String fieldCode;
     private String fieldName;
-    private Point fieldLocation;
+    private String fieldLocation;
     private Double fieldSize;
     private String fieldImage1;
     private String fieldImage2;
+    private String logCode;
     private List<StaffDTO> staff;
 }
