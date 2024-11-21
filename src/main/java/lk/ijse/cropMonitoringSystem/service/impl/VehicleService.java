@@ -15,8 +15,10 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class VehicleService {
+
     @Autowired
     private StaffRepo staffRepo;
+
     @Autowired
     private VehicleRepo vehicleRepo;
 
@@ -35,6 +37,7 @@ public class VehicleService {
 
     }
     public List<VehicleDTO> getAllVehicles() {
+
         List<VehicleEntity> entities = vehicleRepo.findAll();
         return entities.stream().map(entity -> {
             VehicleDTO dto = new VehicleDTO();
@@ -47,5 +50,18 @@ public class VehicleService {
             dto.setStaffId(entity.getStaff() != null ? entity.getStaff().getStaffId(): "N/A");
             return dto;
         }).collect(Collectors.toList());
+    }
+    public VehicleDTO  getSelectedVehicle(String vehicleCode) {
+        VehicleEntity entity = vehicleRepo.findById(vehicleCode)
+                .orElseThrow(() -> new RuntimeException("Vehicle with code " + vehicleCode + " not found"));
+        VehicleDTO dto = new VehicleDTO();
+        dto.setVehicleCode(entity.getVehicleCode());
+        dto.setPlateNumber(entity.getPlateNumber());
+        dto.setCategory(entity.getCategory());
+        dto.setFuelType(entity.getFuelType());
+        dto.setStatus(entity.getStatus());
+        dto.setRemarks(entity.getRemarks());
+        dto.setStaffId(entity.getStaff() != null ? entity.getStaff().getStaffId() : "Staff ID is Null");
+        return dto;
     }
 }

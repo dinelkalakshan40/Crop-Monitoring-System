@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/vehicle")
@@ -43,6 +44,20 @@ public class VehicleController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.emptyList());
+        }
+    }
+    @GetMapping(value = "/{vehicleCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getVehicle(@PathVariable String vehicleCode) {
+        try {
+            VehicleDTO vehicle = vehicleService.getSelectedVehicle(vehicleCode);
+            return ResponseEntity.ok(vehicle);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "An unexpected error occurred while retrieving the vehicle."));
         }
     }
 }
