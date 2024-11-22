@@ -32,6 +32,9 @@ public class MonitorController {
             @RequestPart("logDetails") String logDetails,
             @RequestPart("observedImage") MultipartFile observedImage,
             @RequestPart(value = "staffId", required = false) String staffId) {
+        if (!LogCode.matches("^LogCode-\\d{3}$")) {
+            return ResponseEntity.badRequest().body("Invalid LogCode");
+        }
         try {
             // Extract file type (e.g., image/png or image/jpeg)
             String contentType = observedImage.getContentType();
@@ -73,14 +76,9 @@ public class MonitorController {
 
     @GetMapping(value = "/{LogCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedLog(@PathVariable("LogCode") String LogCode) {
-        String pattern = "^C-\\d{3}$";
-        Pattern regex = Pattern.compile(pattern);
-
-        // Check if LogCode matches the regex
-        if (!regex.matcher(LogCode).matches()) {
-            return ResponseEntity.badRequest().body("Invalid LogCode format.");
+        if (!LogCode.matches("^LogCode-\\d{3}$")) {
+            return ResponseEntity.badRequest().body("Invalid LogCode");
         }
-
         try {
             // Fetch the log using the service
             MonitorLogEntity logEntity = monitoringServiceIMPL.getSelectedLog(LogCode);
@@ -159,12 +157,8 @@ public class MonitorController {
 
     @DeleteMapping(value = "/{LogCode}")
     public ResponseEntity<String> deleteMonitoringLog(@PathVariable("LogCode") String LogCode) {
-        String pattern = "^C-\\d{3}$";
-        Pattern regex = Pattern.compile(pattern);
-
-        // Validate the log code format
-        if (!regex.matcher(LogCode).matches()) {
-            return ResponseEntity.badRequest().body("Invalid LogCode format.");
+        if (!LogCode.matches("^LogCode-\\d{3}$")) {
+            return ResponseEntity.badRequest().body("Invalid LogCode");
         }
         try {
             // Call the service method to delete the log

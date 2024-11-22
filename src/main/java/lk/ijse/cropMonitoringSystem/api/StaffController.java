@@ -21,6 +21,9 @@ public class StaffController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveStaff(@RequestBody StaffDTO staffDTO){
+        if (!staffDTO.getStaffId().matches("^STF-\\d{3}$")) {
+            return (ResponseEntity<Void>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
+        }
         try {
             staffService.saveStaff(staffDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -46,6 +49,9 @@ public class StaffController {
     }
     @GetMapping(value = "/{staffId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StaffDTO> getSelectedStaff(@PathVariable String staffId) {
+        if (!staffId.matches("^STF-\\d{3}$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             StaffDTO staffDTO = staffService.getSelectedStaff(staffId); // Fetch staff by ID
             if (staffDTO != null) {
@@ -62,6 +68,9 @@ public class StaffController {
     }
     @PutMapping(value = "/{staffId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateStaff(@PathVariable String staffId, @RequestBody StaffDTO staffDTO) {
+        if (!staffId.matches("^STF-\\d{3}$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             boolean isUpdated = staffService.updateStaff(staffId, staffDTO);
             if (isUpdated) {
@@ -78,6 +87,9 @@ public class StaffController {
     }
     @DeleteMapping("/{staffId}")
     public ResponseEntity<String> deleteStaff(@PathVariable String staffId) {
+        if (!staffId.matches("^STF-\\d{3}$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             staffService.deleteStaffByStaffId(staffId);
             return ResponseEntity.ok("Staff deleted successfully.");

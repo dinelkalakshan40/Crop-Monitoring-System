@@ -21,7 +21,7 @@ public class FieldController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveField(@RequestBody FieldDTO fieldDTO) {
-        if (!fieldDTO.getFieldCode().matches("^FLD-00\\\\d*$")) {
+        if (!fieldDTO.getFieldCode().matches("^FLD-\\d{3}$")) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle fieldCode. Expected format: FLD-00");
         }
         try {
@@ -38,8 +38,8 @@ public class FieldController {
     @GetMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> getFieldAndStaff(@PathVariable String fieldCode) {
         // Validate the fieldCode format
-        if (!fieldCode.matches("^FLD-00\\d*$")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // No body, just status
+        if (!fieldCode.matches("^FLD-\\d{3}$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         FieldDTO fieldDTO = fieldService.getSelectedStaffAndField(fieldCode);
         return new ResponseEntity<>(fieldDTO, HttpStatus.OK);
@@ -57,7 +57,7 @@ public class FieldController {
     @PutMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> updateFieldAndStaff(@PathVariable String fieldCode, @RequestBody FieldDTO fieldDTO) {
         // Validate the fieldCode format
-        if (!fieldCode.matches("^FLD-00\\d*$")) {
+        if (!fieldCode.matches("^FLD-\\d{3}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {
@@ -73,7 +73,7 @@ public class FieldController {
     @DeleteMapping("/{fieldCode}")
     public ResponseEntity<Void> deleteFieldAndStaff(@PathVariable String fieldCode) {
         // Validate the fieldCode format
-        if (!fieldCode.matches("^FLD-00\\d*$")) {
+        if (!fieldCode.matches("^FLD-\\d{3}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {

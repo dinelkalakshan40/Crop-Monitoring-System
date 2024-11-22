@@ -21,7 +21,7 @@ public class VehicleController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveVehicle(@RequestBody VehicleDTO vehicleDTO){
-        if (!vehicleDTO.getVehicleCode().matches("^VEH-00\\\\d*$")) {
+        if (!vehicleDTO.getVehicleCode().matches("^VEH-\\d{3}$")) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle code format. Expected format: VEH-00");
         }
         try {
@@ -48,6 +48,9 @@ public class VehicleController {
     }
     @GetMapping(value = "/{vehicleCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVehicle(@PathVariable String vehicleCode) {
+        if (!vehicleCode.matches("^VEH-\\d{3}$")) {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle code format. Expected format: VEH-00");
+        }
         try {
             VehicleDTO vehicle = vehicleService.getSelectedVehicle(vehicleCode);
             return ResponseEntity.ok(vehicle);
