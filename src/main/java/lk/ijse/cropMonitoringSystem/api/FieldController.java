@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/fields")
@@ -20,6 +21,9 @@ public class FieldController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveField(@RequestBody FieldDTO fieldDTO) {
+        if (!fieldDTO.getFieldCode().matches("^FLD-00\\\\d*$")) {
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle fieldCode. Expected format: FLD-00");
+        }
         try {
             fieldService.saveField(fieldDTO);
             return new ResponseEntity<>("Field and staff data saved successfully",HttpStatus.CREATED);
@@ -33,6 +37,10 @@ public class FieldController {
     }
     @GetMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> getFieldAndStaff(@PathVariable String fieldCode) {
+        // Validate the fieldCode format
+        if (!fieldCode.matches("^FLD-00\\d*$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // No body, just status
+        }
         FieldDTO fieldDTO = fieldService.getSelectedStaffAndField(fieldCode);
         return new ResponseEntity<>(fieldDTO, HttpStatus.OK);
     }
@@ -48,6 +56,10 @@ public class FieldController {
     }
     @PutMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> updateFieldAndStaff(@PathVariable String fieldCode, @RequestBody FieldDTO fieldDTO) {
+        // Validate the fieldCode format
+        if (!fieldCode.matches("^FLD-00\\d*$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             FieldDTO updatedField = fieldService.updateFieldAndStaff(fieldCode, fieldDTO);
             return new ResponseEntity<>(updatedField, HttpStatus.OK);
@@ -60,6 +72,10 @@ public class FieldController {
 
     @DeleteMapping("/{fieldCode}")
     public ResponseEntity<Void> deleteFieldAndStaff(@PathVariable String fieldCode) {
+        // Validate the fieldCode format
+        if (!fieldCode.matches("^FLD-00\\d*$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         try {
             fieldService.deleteFieldAndStaff(fieldCode);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
