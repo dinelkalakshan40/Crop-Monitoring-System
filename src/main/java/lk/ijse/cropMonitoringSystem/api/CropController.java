@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("api/v1/crops")
 public class CropController {
 

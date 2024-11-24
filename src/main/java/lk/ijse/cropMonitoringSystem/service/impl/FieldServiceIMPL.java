@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,6 +67,32 @@ public class FieldServiceIMPL implements FieldService {
         // Save the field entity along with its associated staff
         fieldRepository.save(fieldEntity);
     }
+    @Override
+    public List<Map<String, Object>> getAllFields() {
+        List<FieldEntity> fieldEntities = fieldRepository.findAll();
+
+        return fieldEntities.stream()
+                .map(field -> {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("fieldCode", field.getFieldCode());
+                    response.put("fieldName", field.getFieldName());
+                    response.put("fieldLocation", field.getFieldLocation());
+                    response.put("fieldSize", field.getFieldSize());
+                    response.put("fieldImage1", field.getFieldImage1());
+                    response.put("fieldImage2", field.getFieldImage2());
+                    if (field.getMonitor_log() != null) {
+                        response.put("logCode", field.getMonitor_log().getLogCode());
+                    } else {
+                        response.put("logCode", null); // Handle cases where no log is associated
+                    }
+                    response.put("staffIds", field.getStaff().stream()
+                            .map(StaffEntity::getStaffId)
+                            .collect(Collectors.toList()));
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public FieldDTO getSelectedStaffAndField(String fieldCode) {

@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("/api/v1/monitors")
 public class MonitorController {
     @Autowired
@@ -32,7 +33,7 @@ public class MonitorController {
             @RequestPart("logDetails") String logDetails,
             @RequestPart("observedImage") MultipartFile observedImage,
             @RequestPart(value = "staffId", required = false) String staffId) {
-        if (!LogCode.matches("^LogCode-\\d{3}$")) {
+        if (!LogCode.matches("^LogCode-00\\d+$")) {
             return ResponseEntity.badRequest().body("Invalid LogCode");
         }
         try {

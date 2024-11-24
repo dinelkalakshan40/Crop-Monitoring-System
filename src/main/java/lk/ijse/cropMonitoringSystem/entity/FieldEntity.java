@@ -22,9 +22,7 @@ public class FieldEntity implements Serializable {
     private String fieldName;
     private String  fieldLocation;
     private Double fieldSize;
-    @Column(columnDefinition = "LONGTEXT")
     private String fieldImage1;
-    @Column(columnDefinition = "LONGTEXT")
     private String fieldImage2;
 
     //field_staff

@@ -10,31 +10,50 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("api/v1/fields")
 public class FieldController {
     @Autowired
     private FieldService fieldService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveField(@RequestBody FieldDTO fieldDTO) {
-        if (!fieldDTO.getFieldCode().matches("^FLD-\\d{3}$")) {
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle fieldCode. Expected format: FLD-00");
+    public ResponseEntity<Map<String, String>> saveField(@RequestBody FieldDTO fieldDTO) {
+        Map<String, String> response = new HashMap<>();
+        if (!fieldDTO.getFieldCode().matches("^FLD-00\\d+$")) {
+            response.put("error", "Invalid field code. Expected format: FLD-00");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         try {
             fieldService.saveField(fieldDTO);
-            return new ResponseEntity<>("Field and staff data saved successfully",HttpStatus.CREATED);
+            response.put("message", "Field and staff data saved successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (DataPersistException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Bad request: Invalid data",HttpStatus.BAD_REQUEST);
+            response.put("error", "Bad request: Invalid data");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Internal server error",HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("error", "Internal server error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Map<String, Object>>> getAllFields() {
+        try {
+            List<Map<String, Object>> fieldsWithStaffIds = fieldService.getAllFields();
+            return ResponseEntity.ok(fieldsWithStaffIds);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
+        }
+    }
+
     @GetMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> getFieldAndStaff(@PathVariable String fieldCode) {
         // Validate the fieldCode format

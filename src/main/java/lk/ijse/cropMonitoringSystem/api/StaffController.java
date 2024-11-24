@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("api/v1/staff")
 public class StaffController {
     @Autowired
