@@ -2,6 +2,8 @@ package lk.ijse.cropMonitoringSystem.api;
 
 import lk.ijse.cropMonitoringSystem.DTO.EquipmentDTO;
 import lk.ijse.cropMonitoringSystem.service.impl.EquipmentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,17 +17,22 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("api/v1/equipments")
 public class EquipmentController {
+    private static Logger logger= LoggerFactory.getLogger(EquipmentController.class);
     @Autowired
     private EquipmentService equipmentService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveEquipment(@RequestBody EquipmentDTO equipmentDTO) {
+        logger.info("saveEquipment called");
         //check validation
         if (!isValidEquipmentId(equipmentDTO.getEquipmentId())) {
+            logger.info("isValidEquipmentId Id is true ");
             return ResponseEntity.badRequest().body("Invalid EquipmentId format. It should be 'EqID-00'.");
         }
         try {
+
             equipmentService.saveEquipment(equipmentDTO);
+            logger.info("Equipment saved successfully");
             return ResponseEntity.status(HttpStatus.CREATED).body("Equipment saved successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -39,8 +46,10 @@ public class EquipmentController {
     }
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllEquipment() {
+        logger.info("getAllEquipment method called");
         try {
             List<EquipmentDTO> equipmentList = equipmentService.getAllEquipment();
+            logger.info("getAllEquipment response successfully");
             return ResponseEntity.ok(equipmentList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,20 +59,15 @@ public class EquipmentController {
     }
     @GetMapping(value = "/{equipmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedEquipment(@PathVariable String equipmentId) {
+        logger.info("getSelectedEquipment method called");
         try {
-            // Validate equipmentId
-            if (!equipmentId.matches("^EqID-\\d{3}$")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "Invalid equipment ID format'"));
-            }
 
-            // Fetch equipment by ID
             EquipmentDTO equipmentDTO = equipmentService.getEquipmentById(equipmentId);
             if (equipmentDTO == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "Equipment not found with ID: " + equipmentId));
             }
-
+            logger.info("Equipment found");
             // Return the equipment data
             return ResponseEntity.ok(equipmentDTO);
 
@@ -76,7 +80,7 @@ public class EquipmentController {
     }
     @PutMapping(value = "/{equipmentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateEquipment(@PathVariable("equipmentId") String equipmentId, @RequestBody EquipmentDTO equipmentDTO) {
-
+        logger.info("updateEquipment method called");
         try {
             // Validate equipmentId
             if (!equipmentId.matches("^EqID-\\d{3}$")) {
@@ -95,6 +99,7 @@ public class EquipmentController {
     }
     @DeleteMapping(value = "/{equipmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteEquipment(@PathVariable("equipmentId") String equipmentId) {
+        logger.info("deleteEquipment method called");
         try {
             if (!equipmentId.matches("^EqID-\\d{3}$")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -102,8 +107,10 @@ public class EquipmentController {
             }
             // Call service to delete the equipment by its ID
             equipmentService.deleteEquipment(equipmentId);
+            logger.info("Equipment deleted successfully");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Equipment deleted successfully.");
         } catch (RuntimeException e) {
+            logger.info("not deleted Equipment");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
