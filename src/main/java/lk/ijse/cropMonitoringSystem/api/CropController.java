@@ -3,6 +3,8 @@ package lk.ijse.cropMonitoringSystem.api;
 import lk.ijse.cropMonitoringSystem.DTO.CropDTO;
 import lk.ijse.cropMonitoringSystem.entity.CropEntity;
 import lk.ijse.cropMonitoringSystem.service.impl.CropService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("api/v1/crops")
 public class CropController {
+    private static Logger logger= LoggerFactory.getLogger(CropController.class);
 
     private static final String CROP_CODE_REGEX = "^Crop-Id-\\d{3}$";
 
@@ -29,6 +32,7 @@ public class CropController {
     private CropService cropService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+
     public ResponseEntity<String> saveCrop(
             @RequestPart("cropCode") String cropCode,
             @RequestPart("cropName") String cropName,
@@ -37,8 +41,10 @@ public class CropController {
             @RequestPart("cropSeason") String cropSeason,
             @RequestPart("fieldCode") String fieldCode,
             @RequestPart(value = "logCode", required = false) String logCode) {
+        logger.info("saveCrop called");
         try {
             if (!isValidCropCode(cropCode)) {
+                logger.info("true isValidCropCode cropCode");
                 return ResponseEntity.badRequest().body("Invalid CropCode format. It should be 'Crop-Id-00'");
             }
             // Validate  image
@@ -57,6 +63,7 @@ public class CropController {
 
             // Save the crop data
             cropService.saveCrop(cropDTO, cropImage);
+            logger.info("Crop saved successfully");
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Crop saved successfully");
         } catch (Exception e) {
@@ -74,9 +81,7 @@ public class CropController {
 
     @GetMapping(value = "/{cropCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedCrop(@PathVariable("cropCode") String cropCode) {
-        if (!isValidCropCode(cropCode)) {
-            return ResponseEntity.badRequest().body("Invalid CropCode format. It should be 'Crop-Id-00'");
-        }
+        logger.info("getSelectedCrop method called");
         try {
             CropEntity cropEntity = cropService.getSelectedCrop(cropCode);
             if (cropEntity == null) {
@@ -97,17 +102,19 @@ public class CropController {
             response.put("cropSeason", cropEntity.getCropSeason());
             response.put("fieldCode", cropEntity.getFieldCrops() != null ? cropEntity.getFieldCrops().getFieldCode() : null);
             response.put("logCode", cropEntity.getMonitorCrop() != null ? cropEntity.getMonitorCrop().getLogCode() : null);
-
+            logger.info(" get selected cropCode successfully");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             e.printStackTrace();
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while retrieving the crop details.");
         }
     }
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CropDTO>> getAllCrops() {
+        logger.info("getAllCrops method called");
         try {
             List<CropDTO> crops = cropService.getAllCrops().stream().map(cropEntity -> {
                 CropDTO cropDTO = new CropDTO();
@@ -125,6 +132,7 @@ public class CropController {
                 }
                 return cropDTO;
             }).collect(Collectors.toList());
+            logger.info("getAllCrops successfully ");
 
             return ResponseEntity.ok(crops);
         } catch (Exception e) {
@@ -141,9 +149,8 @@ public class CropController {
             @RequestPart(value = "cropImage", required = false) MultipartFile cropImage,
             @RequestPart("fieldCode") String fieldCode,
             @RequestPart(value = "logCode", required = false) String logCode) {
-        if (!isValidCropCode(cropCode)) {
-            return ResponseEntity.badRequest().body("Invalid CropCode format. It should be 'Crop-Id-00'.");
-        }
+        logger.info("updateCrop method called");
+
         try {
             // Validate image if present
             double imageSizeMB = 0.0;
@@ -166,6 +173,7 @@ public class CropController {
 
             // Update the crop
             cropService.updateCrop(cropDTO, cropImage, imageSizeMB);
+            logger.info("Crop updated successfully");
             return ResponseEntity.ok("Crop updated successfully.");
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,11 +182,10 @@ public class CropController {
     }
     @DeleteMapping(value = "/{cropCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteCrop(@PathVariable("cropCode") String cropCode) {
-        if (!isValidCropCode(cropCode)) {
-            return ResponseEntity.badRequest().body("Invalid CropCode format. It should be 'Crop-Id-00'.");
-        }
+        logger.info("deleteCrop method called");
         try {
             cropService.deleteCrop(cropCode);
+            logger.info("Crop deleted successfully");
             return ResponseEntity.ok("Crop deleted successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
