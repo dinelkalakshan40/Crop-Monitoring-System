@@ -1,0 +1,30 @@
+<configuration>
+    <logger name="org.hibernate" level="WARN" />
+
+    <!-- Suppress Hibernate Internal Logs -->
+    <logger name="org.hibernate.boot.model.internal.BasicValueBinder" level="WARN" />
+    <logger name="com.zaxxer.hikari" level="WARN" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level> <!-- Allow only INFO level logs -->
+        </filter>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <appender name="File" class="ch.qos.logback.core.FileAppender">
+        <file>E:/GDSE67/AAD/Spring-boot/Crop-Monitoring-System/app.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="File" />
+    </root>
+</configuration>
