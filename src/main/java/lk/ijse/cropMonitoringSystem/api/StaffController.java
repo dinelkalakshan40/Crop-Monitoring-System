@@ -3,6 +3,8 @@ package lk.ijse.cropMonitoringSystem.api;
 import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.service.impl.StaffServiceIMPL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,19 +19,23 @@ import java.util.NoSuchElementException;
 @CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("api/v1/staff")
 public class StaffController {
+    private static Logger logger = LoggerFactory.getLogger(StaffController.class);
     @Autowired
     private StaffServiceIMPL staffService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveStaff(@RequestBody StaffDTO staffDTO){
+        logger.info("saveStaff method called");
         if (!staffDTO.getStaffId().matches("^STF-\\d{3}$")) {
             return (ResponseEntity<Void>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         try {
             staffService.saveStaff(staffDTO);
+            logger.info("staff saved sucess ");
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (DataPersistException e){
             e.printStackTrace();
+            logger.info("staff not saved");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
             e.printStackTrace();
@@ -39,6 +45,7 @@ public class StaffController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<StaffDTO>> getAllStaff() {
+        logger.info("getAllStaff method called");
         try {
             List<StaffDTO> staffDTOList = staffService.getAllStaff(); // Call service method to fetch all staff
             return ResponseEntity.ok(staffDTOList); // Return the list of staff DTOs
@@ -50,6 +57,7 @@ public class StaffController {
     }
     @GetMapping(value = "/{staffId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StaffDTO> getSelectedStaff(@PathVariable String staffId) {
+        logger.info("getSelectedStaff method called");
         if (!staffId.matches("^STF-\\d{3}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -69,12 +77,14 @@ public class StaffController {
     }
     @PutMapping(value = "/{staffId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateStaff(@PathVariable String staffId, @RequestBody StaffDTO staffDTO) {
+        logger.info("updateStaff method called");
         if (!staffId.matches("^STF-\\d{3}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {
             boolean isUpdated = staffService.updateStaff(staffId, staffDTO);
             if (isUpdated) {
+                logger.info("Staff updated successfully");
                 return ResponseEntity.ok("Staff updated successfully.");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -88,11 +98,13 @@ public class StaffController {
     }
     @DeleteMapping("/{staffId}")
     public ResponseEntity<String> deleteStaff(@PathVariable String staffId) {
+        logger.info("deleteStaff method called");
         if (!staffId.matches("^STF-\\d{3}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {
             staffService.deleteStaffByStaffId(staffId);
+            logger.info("Staff deleted successfully");
             return ResponseEntity.ok("Staff deleted successfully.");
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

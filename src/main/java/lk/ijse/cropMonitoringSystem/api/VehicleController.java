@@ -2,6 +2,8 @@ package lk.ijse.cropMonitoringSystem.api;
 
 import lk.ijse.cropMonitoringSystem.DTO.VehicleDTO;
 import lk.ijse.cropMonitoringSystem.service.impl.VehicleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,16 +19,20 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("api/v1/vehicle")
 public class VehicleController {
+    private static Logger logger= LoggerFactory.getLogger(VehicleController.class);
     @Autowired
     private VehicleService vehicleService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveVehicle(@RequestBody VehicleDTO vehicleDTO){
+        logger.info("saveVehicle method called");
         if (!vehicleDTO.getVehicleCode().matches("^VEH-\\d{3}$")) {
+            logger.info("saved vehicle validation successful");
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle code format. Expected format: VEH-00");
         }
         try {
             vehicleService.savedVehicle(vehicleDTO);
+            logger.info("Vehicle saved successfully");
             return ResponseEntity.status(HttpStatus.CREATED).body("Vehicle saved successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -38,6 +44,7 @@ public class VehicleController {
     }
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VehicleDTO>> getAllVehicles() {
+        logger.info("getAllVehicles method called");
         try {
             List<VehicleDTO> vehicles = vehicleService.getAllVehicles();
             return ResponseEntity.ok(vehicles);
@@ -49,6 +56,7 @@ public class VehicleController {
     }
     @GetMapping(value = "/{vehicleCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVehicle(@PathVariable String vehicleCode) {
+        logger.info("getVehicle method called");
         if (!vehicleCode.matches("^VEH-\\d{3}$")) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle code format. Expected format: VEH-00");
         }
@@ -68,6 +76,7 @@ public class VehicleController {
     public ResponseEntity<?> updateVehicle(
             @PathVariable String vehicleCode,
             @RequestBody VehicleDTO vehicleDTO) {
+        logger.info("updateVehicle method called");
 
         if (!vehicleDTO.getVehicleCode().matches("^VEH-\\d{3}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -76,6 +85,7 @@ public class VehicleController {
 
         try {
             vehicleService.updateVehicle(vehicleCode, vehicleDTO);
+            logger.info("Vehicle updated successfully");
             return ResponseEntity.ok(Map.of("message", "Vehicle updated successfully."));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -88,12 +98,14 @@ public class VehicleController {
     }
     @DeleteMapping(value = "/{vehicleCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteVehicle(@PathVariable String vehicleCode) {
+        logger.info("deleteVehicle method called");
         if (!vehicleCode.matches("^VEH-\\d{3}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "Invalid vehicle code format"));
         }
         try {
             vehicleService.deleteVehicle(vehicleCode);
+            logger.info("Vehicle deleted successfully");
             return ResponseEntity.ok(Map.of("message", "Vehicle deleted successfully."));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
