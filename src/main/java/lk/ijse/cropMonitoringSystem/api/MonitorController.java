@@ -7,6 +7,8 @@ import lk.ijse.cropMonitoringSystem.DTO.MonitorDTO;
 import lk.ijse.cropMonitoringSystem.entity.MonitorLogEntity;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.service.impl.MonitoringServiceIMPL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +25,7 @@ import java.util.regex.Pattern;
 @CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("/api/v1/monitors")
 public class MonitorController {
+    private static Logger logger= LoggerFactory.getLogger(MonitorController.class);
     @Autowired
     private MonitoringServiceIMPL monitoringServiceIMPL;
 
@@ -33,6 +36,7 @@ public class MonitorController {
             @RequestPart("logDetails") String logDetails,
             @RequestPart("observedImage") MultipartFile observedImage,
             @RequestPart(value = "staffId", required = false) String staffId) {
+        logger.info("saveMonitor method called");
         if (!LogCode.matches("^LogCode-00\\d+$")) {
             return ResponseEntity.badRequest().body("Invalid LogCode");
         }
@@ -62,11 +66,14 @@ public class MonitorController {
 
             // Save using a service
             monitoringServiceIMPL.saveMonitorLog(monitorLogDTO);
+            logger.info("Monitor log saved successfully");
 
             return ResponseEntity.ok("Monitor log saved successfully!");
         } catch (IOException e) {
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the request.");
         } catch (DataPersistException e) {
+            logger.info("Monitor log not saved");
             e.printStackTrace();
             return new ResponseEntity<>("Bad request: Invalid data", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
@@ -77,6 +84,7 @@ public class MonitorController {
 
     @GetMapping(value = "/{LogCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedLog(@PathVariable("LogCode") String LogCode) {
+        logger.info("getSelectedLog method called");
         if (!LogCode.matches("^LogCode-\\d{3}$")) {
             return ResponseEntity.badRequest().body("Invalid LogCode");
         }
@@ -132,6 +140,7 @@ public class MonitorController {
             @RequestPart("date") String date,
             @RequestPart("logDetails") String logDetails,
             @RequestPart("observedImage") MultipartFile observedImage) {
+        logger.info("updateMonitorLog method called");
         try {
             String contentType = observedImage.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
@@ -158,6 +167,7 @@ public class MonitorController {
 
     @DeleteMapping(value = "/{LogCode}")
     public ResponseEntity<String> deleteMonitoringLog(@PathVariable("LogCode") String LogCode) {
+        logger.info("deleteMonitoringLog method called");
         if (!LogCode.matches("^LogCode-\\d{3}$")) {
             return ResponseEntity.badRequest().body("Invalid LogCode");
         }
