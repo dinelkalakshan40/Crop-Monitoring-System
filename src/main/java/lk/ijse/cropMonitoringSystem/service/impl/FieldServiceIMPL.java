@@ -6,13 +6,9 @@ import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.entity.FieldEntity;
 import lk.ijse.cropMonitoringSystem.entity.MonitorLogEntity;
 import lk.ijse.cropMonitoringSystem.entity.StaffEntity;
-import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
 import lk.ijse.cropMonitoringSystem.repository.FieldRepository;
 import lk.ijse.cropMonitoringSystem.repository.MonitoringRepo;
 import lk.ijse.cropMonitoringSystem.repository.StaffRepo;
-import lk.ijse.cropMonitoringSystem.service.FieldService;
-import lk.ijse.cropMonitoringSystem.util.AppUtil;
-import lk.ijse.cropMonitoringSystem.util.Mapping;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class FieldServiceIMPL implements FieldService {
+public class FieldServiceIMPL  {
     @Autowired
     private FieldRepository fieldRepository;
 
@@ -67,7 +63,7 @@ public class FieldServiceIMPL implements FieldService {
         // Save the field entity along with its associated staff
         fieldRepository.save(fieldEntity);
     }
-    @Override
+
     public List<Map<String, Object>> getAllFields() {
         List<FieldEntity> fieldEntities = fieldRepository.findAll();
 
@@ -92,9 +88,32 @@ public class FieldServiceIMPL implements FieldService {
                 })
                 .collect(Collectors.toList());
     }
+    public String getLastFieldCode() {
+        // Query database for the last field code
+        return fieldRepository.findLastFieldCode();
+    }
+    public String generateNextFieldCode() {
+
+        String lastFieldCode = getLastFieldCode();
 
 
-    @Override
+        if (lastFieldCode != null && lastFieldCode.startsWith("FLD-")) {
+
+            String numericPart = lastFieldCode.substring(4);
+
+
+            int lastIdNumber = Integer.parseInt(numericPart);
+
+            // Increment the number
+            lastIdNumber++;
+
+            return String.format("FLD-%04d", lastIdNumber);
+        } else {
+
+            return "FLD-0001";
+        }
+    }
+
     public FieldDTO getSelectedStaffAndField(String fieldCode) {
         if (fieldRepository.existsById(fieldCode)) {
 
@@ -105,7 +124,7 @@ public class FieldServiceIMPL implements FieldService {
             throw new RuntimeException("Field with code " + fieldCode + " not found");
         }
     }
-    @Override
+
     public FieldDTO getOnlySelectedField(String fieldCode){
         if (fieldRepository.existsById(fieldCode)) {
             FieldEntity fieldEntity = fieldRepository.getReferenceById(fieldCode);
@@ -121,7 +140,7 @@ public class FieldServiceIMPL implements FieldService {
             throw new RuntimeException("Field with code " + fieldCode + " not found");
         }
     }
-    @Override
+
     public FieldDTO updateFieldAndStaff(String fieldCode, FieldDTO fieldDTO) {
         // Fetch the FieldEntity by fieldCode
         Optional<FieldEntity> existingFieldOptional = fieldRepository.findById(fieldCode);
@@ -132,7 +151,7 @@ public class FieldServiceIMPL implements FieldService {
 
         FieldEntity existingField = existingFieldOptional.get();
 
-        // Update the FieldEntity attributes
+        // Update the FieldEntity
         existingField.setFieldName(fieldDTO.getFieldName());
         existingField.setFieldLocation(fieldDTO.getFieldLocation());
         existingField.setFieldSize(fieldDTO.getFieldSize());
@@ -140,7 +159,7 @@ public class FieldServiceIMPL implements FieldService {
         existingField.setFieldImage2(fieldDTO.getFieldImage2());
 
         // Update staff details (if provided in the DTO)
-        List<StaffDTO> staffDTOs = fieldDTO.getStaff();
+       /* List<StaffDTO> staffDTOs = fieldDTO.getStaff();
         if (staffDTOs != null) {
             List<StaffEntity> updatedStaffList = new ArrayList<>();
 
@@ -169,14 +188,14 @@ public class FieldServiceIMPL implements FieldService {
             }
             // Set the updated staff list to the FieldEntity
             existingField.setStaff(updatedStaffList);
-        }
+        }*/
         // Save the updated FieldEntity
         fieldRepository.save(existingField);
 
         // Return the updated FieldDTO
         return modelMapper.map(existingField, FieldDTO.class);
     }
-    @Override
+
     public void deleteFieldAndStaff(String fieldCode) {
         Optional<FieldEntity> field = fieldRepository.findById(fieldCode);
         if (field.isPresent()) {
@@ -185,7 +204,7 @@ public class FieldServiceIMPL implements FieldService {
             throw new RuntimeException("Field not found with code: " + fieldCode);
         }
     }
-    @Override
+
     public List<StaffDTO> getOnlySelectedFiled(String fieldCode) {
         FieldEntity fieldEntity = fieldRepository.findById(fieldCode)
                 .orElseThrow(() -> new EntityNotFoundException("Field not found with code: " + fieldCode));

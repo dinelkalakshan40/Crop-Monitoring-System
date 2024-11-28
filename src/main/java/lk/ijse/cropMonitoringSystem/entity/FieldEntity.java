@@ -36,11 +36,11 @@ public class FieldEntity implements Serializable {
     private List<StaffEntity> staff;
 
     //crop Entity
-    @OneToMany(mappedBy = "fieldCrops")//
+    @OneToMany(mappedBy = "fieldCrops",cascade = CascadeType.ALL)
     private List<CropEntity> crops;
 
     //equipment Entity;
-    @OneToMany(mappedBy = "fieldEquipment")//
+    @OneToMany(mappedBy = "fieldEquipment",cascade = CascadeType.ALL)
     private List<EquipmentEntity> equipments;//
 
     //monitor_Log Entity

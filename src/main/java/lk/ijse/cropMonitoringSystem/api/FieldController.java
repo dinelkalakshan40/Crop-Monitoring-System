@@ -3,7 +3,7 @@ package lk.ijse.cropMonitoringSystem.api;
 import lk.ijse.cropMonitoringSystem.DTO.FieldDTO;
 import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
-import lk.ijse.cropMonitoringSystem.service.FieldService;
+import lk.ijse.cropMonitoringSystem.service.impl.FieldServiceIMPL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class FieldController {
     static Logger logger= LoggerFactory.getLogger(FieldController.class);
 
     @Autowired
-    private FieldService fieldService;
+    private FieldServiceIMPL fieldService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> saveField(@RequestBody FieldDTO fieldDTO) {
@@ -68,6 +68,17 @@ public class FieldController {
         }
     }
 
+    @GetMapping("/fieldCode")
+    public ResponseEntity<String> generateFieldCode() {
+        try {
+            String newFieldCode=fieldService.generateNextFieldCode();// Generate next code
+            return ResponseEntity.ok(newFieldCode); // Return generated code
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error generating field code");
+        }
+    }
+
     @GetMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> getFieldAndStaff(@PathVariable String fieldCode) {
         logger.info("getFieldAndStaff method called ");
@@ -94,7 +105,7 @@ public class FieldController {
     @PutMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> updateFieldAndStaff(@PathVariable String fieldCode, @RequestBody FieldDTO fieldDTO) {
         logger.info("updateFieldAndStaff Method called");
-
+        System.out.println("Received data: " + fieldDTO);
         try {
             FieldDTO updatedField = fieldService.updateFieldAndStaff(fieldCode, fieldDTO);
             logger.info("updated sucess");
@@ -109,11 +120,8 @@ public class FieldController {
     @DeleteMapping("/{fieldCode}")
     public ResponseEntity<Void> deleteFieldAndStaff(@PathVariable String fieldCode) {
         logger.info("deleteFieldAndStaff Method called");
-        // Validate the fieldCode format
-        if (!fieldCode.matches("^FLD-\\d{3}$")) {
-            logger.info("delete Field Id validation ok");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+
+
         try {
             fieldService.deleteFieldAndStaff(fieldCode);
             logger.info("delete Field SucessFully");
