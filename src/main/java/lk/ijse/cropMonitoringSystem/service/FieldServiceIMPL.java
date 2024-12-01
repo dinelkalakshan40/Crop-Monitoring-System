@@ -1,4 +1,4 @@
-package lk.ijse.cropMonitoringSystem.service.impl;
+package lk.ijse.cropMonitoringSystem.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lk.ijse.cropMonitoringSystem.DTO.FieldDTO;

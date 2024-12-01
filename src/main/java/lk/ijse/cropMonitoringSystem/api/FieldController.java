@@ -3,7 +3,7 @@ package lk.ijse.cropMonitoringSystem.api;
 import lk.ijse.cropMonitoringSystem.DTO.FieldDTO;
 import lk.ijse.cropMonitoringSystem.DTO.StaffDTO;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
-import lk.ijse.cropMonitoringSystem.service.impl.FieldServiceIMPL;
+import lk.ijse.cropMonitoringSystem.service.FieldServiceIMPL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

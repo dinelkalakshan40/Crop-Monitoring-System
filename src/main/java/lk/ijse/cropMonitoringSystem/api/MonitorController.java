@@ -1,12 +1,9 @@
 package lk.ijse.cropMonitoringSystem.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lk.ijse.cropMonitoringSystem.DTO.CropDTO;
 import lk.ijse.cropMonitoringSystem.DTO.MonitorDTO;
 import lk.ijse.cropMonitoringSystem.entity.MonitorLogEntity;
 import lk.ijse.cropMonitoringSystem.exception.DataPersistException;
-import lk.ijse.cropMonitoringSystem.service.impl.MonitoringServiceIMPL;
+import lk.ijse.cropMonitoringSystem.service.MonitoringServiceIMPL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:63342")

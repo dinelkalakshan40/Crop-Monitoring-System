@@ -1,4 +1,4 @@
-package lk.ijse.cropMonitoringSystem.service.impl;
+package lk.ijse.cropMonitoringSystem.service;
 
 import lk.ijse.cropMonitoringSystem.DTO.CropDTO;
 import lk.ijse.cropMonitoringSystem.entity.CropEntity;

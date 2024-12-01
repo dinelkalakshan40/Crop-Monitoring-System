@@ -1,7 +1,7 @@
 package lk.ijse.cropMonitoringSystem.api;
 
 import lk.ijse.cropMonitoringSystem.DTO.VehicleDTO;
-import lk.ijse.cropMonitoringSystem.service.impl.VehicleService;
+import lk.ijse.cropMonitoringSystem.service.VehicleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;

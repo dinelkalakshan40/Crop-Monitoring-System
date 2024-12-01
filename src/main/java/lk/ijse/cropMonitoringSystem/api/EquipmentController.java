@@ -1,7 +1,7 @@
 package lk.ijse.cropMonitoringSystem.api;
 
 import lk.ijse.cropMonitoringSystem.DTO.EquipmentDTO;
-import lk.ijse.cropMonitoringSystem.service.impl.EquipmentService;
+import lk.ijse.cropMonitoringSystem.service.EquipmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
