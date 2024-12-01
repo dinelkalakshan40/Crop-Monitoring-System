@@ -53,17 +53,17 @@ public class UserController {
     @PutMapping(value = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUser(@PathVariable("userId") String userId, @RequestBody UserDTO userDTO) {
         try {
-            // Call the service layer to update the user
+
             userService.updateUser(userId, userDTO);
 
-            // Return a success response
+
             return ResponseEntity.ok("User with ID " + userId + " updated successfully");
         } catch (RuntimeException e) {
-            // Handle case where the user to update is not found
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Error: " + e.getMessage());
         } catch (Exception e) {
-            // Handle any other unexpected errors
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An unexpected error occurred: " + e.getMessage());
         }

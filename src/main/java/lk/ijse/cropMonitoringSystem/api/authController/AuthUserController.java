@@ -20,21 +20,24 @@ import static java.lang.String.valueOf;
 @RestController
 @RequiredArgsConstructor
 public class AuthUserController {
+
     private final AuthService authService;
+
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping(value = "signup",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JWTAuthResponse> saveUser(@RequestBody UserDTO userDTO){
         try {
-            //UserId generate
+
             String userId = AppUtil.generateUserId();
-            //Build the Object
+
             UserDTO buildUserDTO = new UserDTO();
             buildUserDTO.setUserId(userId);
             buildUserDTO.setUserName(userDTO.getUserName());
             buildUserDTO.setEmail(userDTO.getEmail());
             buildUserDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             buildUserDTO.setRole(userDTO.getRole());
+
             return ResponseEntity.ok(authService.signUp(buildUserDTO));
         } catch (DataPersistException e) {
             e.printStackTrace();

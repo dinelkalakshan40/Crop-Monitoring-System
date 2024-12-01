@@ -15,9 +15,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     private final UserRepo userRepo;
+
     private final Mapping mapping;
+
     private final JWTService jwtService;
+
     private final AuthenticationManager authenticationManager;
 
     public JWTAuthResponse signIn(SignIn signIn){
