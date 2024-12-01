@@ -33,6 +33,15 @@ public class UserService {
         List<UserEntity> allUsers =userRepo.findAll();
         return mapping.asUserDTOList(allUsers);
     }
+    public UserDTO getUser(String userId) {
+        // Fetch the user entity or throw an exception if not found
+        UserEntity selectedUser = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User with ID " + userId + " not found"));
+
+        // Map and return the UserDTO
+        return mapping.toUserDTO(selectedUser);
+    }
+
     public void deleteUser(String userId){
         Optional<UserEntity> existedUser = userRepo.findById(userId);
         if(!existedUser.isPresent()){
