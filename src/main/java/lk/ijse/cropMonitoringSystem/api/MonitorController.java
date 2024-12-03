@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,7 @@ public class MonitorController {
     @Autowired
     private MonitoringServiceIMPL monitoringServiceIMPL;
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> saveMonitor(
             @RequestPart("LogCode") String LogCode,
@@ -77,6 +79,7 @@ public class MonitorController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping(value = "/{LogCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedLog(@PathVariable("LogCode") String LogCode) {
         logger.info("getSelectedLog method called");
@@ -111,6 +114,7 @@ public class MonitorController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getAllMonitorLogs() {
         try {
@@ -129,6 +133,7 @@ public class MonitorController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @PutMapping(value = "/{LogCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateMonitorLog(
             @PathVariable("LogCode") String LogCode,
@@ -160,6 +165,7 @@ public class MonitorController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @DeleteMapping(value = "/{LogCode}")
     public ResponseEntity<String> deleteMonitoringLog(@PathVariable("LogCode") String LogCode) {
         logger.info("deleteMonitoringLog method called");

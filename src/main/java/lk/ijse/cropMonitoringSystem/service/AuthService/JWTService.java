@@ -62,6 +62,7 @@ public class JWTService  {
                 .setExpiration(refreshExpire)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
+    //check token is Expaierd
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -72,6 +73,7 @@ public class JWTService  {
         return Jwts.parser().setSigningKey(getSignKey()).build().parseClaimsJws(token)
                 .getBody();
     }
+    // get Secrate key and convert it as Base64 key
     private Key getSignKey(){
         byte[] decode = Decoders.BASE64.decode(jwtKey);
         return Keys.hmacShaKeyFor(decode);

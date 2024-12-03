@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class StaffController {
     @Autowired
     private StaffServiceIMPL staffService;
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveStaff(@RequestBody StaffDTO staffDTO){
         logger.info("saveStaff method called");
@@ -43,6 +45,7 @@ public class StaffController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<StaffDTO>> getAllStaff() {
         logger.info("getAllStaff method called");
@@ -55,6 +58,8 @@ public class StaffController {
                     .body(new ArrayList<>()); // Return empty list in case of failure
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @GetMapping(value = "/{staffId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StaffDTO> getSelectedStaff(@PathVariable String staffId) {
         logger.info("getSelectedStaff method called");
@@ -75,6 +80,8 @@ public class StaffController {
                     .body(null); // Return 500 in case of failure
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @PutMapping(value = "/{staffId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateStaff(@PathVariable String staffId, @RequestBody StaffDTO staffDTO) {
         logger.info("updateStaff method called");
@@ -96,6 +103,8 @@ public class StaffController {
                     .body("Failed to update staff.");
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @DeleteMapping("/{staffId}")
     public ResponseEntity<String> deleteStaff(@PathVariable String staffId) {
         logger.info("deleteStaff method called");

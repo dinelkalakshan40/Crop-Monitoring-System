@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class FieldController {
     @Autowired
     private FieldServiceIMPL fieldService;
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> saveField(@RequestBody FieldDTO fieldDTO) {
         logger.info("saveField method call");
@@ -54,6 +56,7 @@ public class FieldController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Map<String, Object>>> getAllFields() {
         logger.info("getAllFields called");
@@ -68,6 +71,7 @@ public class FieldController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping("/fieldCode")
     public ResponseEntity<String> generateFieldCode() {
         try {
@@ -79,6 +83,7 @@ public class FieldController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> getFieldAndStaff(@PathVariable String fieldCode) {
         logger.info("getFieldAndStaff method called ");
@@ -91,17 +96,23 @@ public class FieldController {
         FieldDTO fieldDTO = fieldService.getSelectedStaffAndField(fieldCode);
         return new ResponseEntity<>(fieldDTO, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping("/details/{fieldCode}")
     public ResponseEntity<FieldDTO> getOnlyField(@PathVariable String fieldCode) {
         logger.info("getOnlyField Method called");
         FieldDTO fieldDetails = fieldService.getOnlySelectedField(fieldCode);
         return new ResponseEntity<>(fieldDetails, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping("/{fieldCode}/staff")
     public ResponseEntity<List<StaffDTO>> getStaffByFieldCode(@PathVariable String fieldCode) {
         List<StaffDTO> staff = fieldService.getOnlySelectedFiled(fieldCode);
         return new ResponseEntity<>(staff, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @PutMapping("/{fieldCode}")
     public ResponseEntity<FieldDTO> updateFieldAndStaff(@PathVariable String fieldCode, @RequestBody FieldDTO fieldDTO) {
         logger.info("updateFieldAndStaff Method called");
@@ -117,6 +128,7 @@ public class FieldController {
         }
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @DeleteMapping("/{fieldCode}")
     public ResponseEntity<Void> deleteFieldAndStaff(@PathVariable String fieldCode) {
         logger.info("deleteFieldAndStaff Method called");

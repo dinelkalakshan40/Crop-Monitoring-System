@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -22,6 +23,7 @@ public class VehicleController {
     @Autowired
     private VehicleService vehicleService;
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveVehicle(@RequestBody VehicleDTO vehicleDTO){
         logger.info("saveVehicle method called");
@@ -41,6 +43,8 @@ public class VehicleController {
         }
         
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VehicleDTO>> getAllVehicles() {
         logger.info("getAllVehicles method called");
@@ -53,6 +57,8 @@ public class VehicleController {
                     .body(Collections.emptyList());
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @GetMapping(value = "/{vehicleCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVehicle(@PathVariable String vehicleCode) {
         logger.info("getVehicle method called");
@@ -71,6 +77,8 @@ public class VehicleController {
                     .body(Map.of("error", "An unexpected error occurred while retrieving the vehicle."));
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @PutMapping(value = "/{vehicleCode}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateVehicle(
             @PathVariable String vehicleCode,
@@ -95,6 +103,8 @@ public class VehicleController {
                     .body(Map.of("error", "An unexpected error occurred while updating the vehicle."));
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @DeleteMapping(value = "/{vehicleCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteVehicle(@PathVariable String vehicleCode) {
         logger.info("deleteVehicle method called");
@@ -115,6 +125,4 @@ public class VehicleController {
                     .body(Map.of("error", "An unexpected error occurred while deleting the vehicle."));
         }
     }
-
-
 }

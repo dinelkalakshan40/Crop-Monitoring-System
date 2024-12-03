@@ -31,7 +31,7 @@ public class CropController {
     @Autowired
     private CropService cropService;
 
-    @PreAuthorize("hasRole('ADMINISTRATIVE')") // Only users with ADMIN role can save crops
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')") // Only MANAger and SCIENTIST can save crops
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> saveCrop(
             @RequestPart("cropCode") String cropCode,
@@ -79,6 +79,7 @@ public class CropController {
         return matcher.matches();
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping(value = "/{cropCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedCrop(@PathVariable("cropCode") String cropCode) {
         logger.info("getSelectedCrop method called");
@@ -112,6 +113,7 @@ public class CropController {
                     .body("An error occurred while retrieving the crop details.");
         }
     }
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CropDTO>> getAllCrops() {
         logger.info("getAllCrops method called");
@@ -140,6 +142,7 @@ public class CropController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @PutMapping(value = "/{cropCode}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateCrop(
             @PathVariable("cropCode") String cropCode,
@@ -180,6 +183,7 @@ public class CropController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update crop.");
         }
     }
+    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @DeleteMapping(value = "/{cropCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteCrop(@PathVariable("cropCode") String cropCode) {
         logger.info("deleteCrop method called");

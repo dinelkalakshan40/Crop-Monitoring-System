@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class EquipmentController {
     @Autowired
     private EquipmentService equipmentService;
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveEquipment(@RequestBody EquipmentDTO equipmentDTO) {
         logger.info("saveEquipment called");
@@ -44,6 +46,8 @@ public class EquipmentController {
     private boolean isValidEquipmentId(String equipmentId) {
         return equipmentId != null && equipmentId.matches("EqID-\\d+");
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllEquipment() {
         logger.info("getAllEquipment method called");
@@ -57,6 +61,8 @@ public class EquipmentController {
                     .body(Map.of("error", "Failed to fetch equipment data."));
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @GetMapping(value = "/{equipmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSelectedEquipment(@PathVariable String equipmentId) {
         logger.info("getSelectedEquipment method called");
@@ -78,6 +84,8 @@ public class EquipmentController {
         }
 
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @PutMapping(value = "/{equipmentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateEquipment(@PathVariable("equipmentId") String equipmentId, @RequestBody EquipmentDTO equipmentDTO) {
         logger.info("updateEquipment method called");
@@ -97,6 +105,8 @@ public class EquipmentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update equipment.");
         }
     }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMINISTRATIVE')")
     @DeleteMapping(value = "/{equipmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteEquipment(@PathVariable("equipmentId") String equipmentId) {
         logger.info("deleteEquipment method called");
