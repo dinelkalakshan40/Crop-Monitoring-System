@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,8 +31,8 @@ public class CropController {
     @Autowired
     private CropService cropService;
 
+    @PreAuthorize("hasRole('ADMINISTRATIVE')") // Only users with ADMIN role can save crops
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-
     public ResponseEntity<String> saveCrop(
             @RequestPart("cropCode") String cropCode,
             @RequestPart("cropName") String cropName,

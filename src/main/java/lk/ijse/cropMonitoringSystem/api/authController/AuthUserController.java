@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import static java.lang.String.valueOf;
 
 @RequestMapping("api/v1/auth/")
 @RestController
