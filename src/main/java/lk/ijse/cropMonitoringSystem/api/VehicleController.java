@@ -27,7 +27,7 @@ public class VehicleController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveVehicle(@RequestBody VehicleDTO vehicleDTO){
         logger.info("saveVehicle method called");
-        if (!vehicleDTO.getVehicleCode().matches("^VEH-\\d{3}$")) {
+        if (!vehicleDTO.getVehicleCode().matches("^VEH-\\d{3,4}$")) {
             logger.info("saved vehicle validation successful");
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid vehicle code format. Expected format: VEH-00");
         }
