@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class CropController {
     private static Logger logger= LoggerFactory.getLogger(CropController.class);
 
-    private static final String CROP_CODE_REGEX = "^Crop-Id-\\d{3}$";
+    private static final String CROP_CODE_REGEX = "^Crop-Id-\\d{3,4}$";
 
     @Autowired
     private CropService cropService;

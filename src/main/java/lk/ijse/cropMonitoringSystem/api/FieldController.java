@@ -71,7 +71,7 @@ public class FieldController {
         }
     }
 
-    @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
+   // @PreAuthorize("hasRole('MANAGER') or hasRole('SCIENTIST')")
     @GetMapping("/fieldCode")
     public ResponseEntity<String> generateFieldCode() {
         try {
@@ -136,7 +136,7 @@ public class FieldController {
 
         try {
             fieldService.deleteFieldAndStaff(fieldCode);
-            logger.info("delete Field SucessFully");
+            logger.info("delete Field SuccessFully");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -108,9 +108,7 @@ public class StaffController {
     @DeleteMapping("/{staffId}")
     public ResponseEntity<String> deleteStaff(@PathVariable String staffId) {
         logger.info("deleteStaff method called");
-        if (!staffId.matches("^STF-\\d{3}$")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+
         try {
             staffService.deleteStaffByStaffId(staffId);
             logger.info("Staff deleted successfully");

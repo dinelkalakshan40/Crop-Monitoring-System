@@ -23,15 +23,15 @@ public class MonitorLogEntity implements Serializable {
     private String observedImage;
 
     //staff Entity
-    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
     @JoinColumn(name = "staffId",nullable = true)
     private StaffEntity staff;
 
     // Field Entity
-    @OneToMany(mappedBy = "monitor_log")//
+    @OneToMany(mappedBy = "monitor_log",cascade = CascadeType.ALL)//
     private List<FieldEntity> fields;
 
     //Crop Entity
-    @OneToMany(mappedBy = "monitorCrop")///
+    @OneToMany(mappedBy = "monitorCrop",cascade = CascadeType.ALL)///
     private List<CropEntity> crops;
 }
