@@ -28,7 +28,7 @@ public class StaffController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveStaff(@RequestBody StaffDTO staffDTO){
         logger.info("saveStaff method called");
-        if (!staffDTO.getStaffId().matches("^STF-\\d{3}$")) {
+        if (!staffDTO.getStaffId().matches("^STF-\\d{3,4}$")) {
             return (ResponseEntity<Void>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
         }
         try {
@@ -63,7 +63,7 @@ public class StaffController {
     @GetMapping(value = "/{staffId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StaffDTO> getSelectedStaff(@PathVariable String staffId) {
         logger.info("getSelectedStaff method called");
-        if (!staffId.matches("^STF-\\d{3}$")) {
+        if (!staffId.matches("^STF-\\d{3,4}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {
@@ -85,7 +85,7 @@ public class StaffController {
     @PutMapping(value = "/{staffId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateStaff(@PathVariable String staffId, @RequestBody StaffDTO staffDTO) {
         logger.info("updateStaff method called");
-        if (!staffId.matches("^STF-\\d{3}$")) {
+        if (!staffId.matches("^STF-\\d{3,4}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {
